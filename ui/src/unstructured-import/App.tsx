@@ -239,7 +239,19 @@ const MergedUnstructuredImport: React.FC = () => {
 
   // -- graph‑modal state --
   const [showGraphModal, setShowGraphModal] = useState(false);
-  const [graphUrl, setGraphUrl] = useState<string | null>(null);
+
+  // const [graphUrl, setGraphUrl] = useState<string | null>(null);
+
+  const [initialGraphUrl, setInitialGraphUrl] = useState<string | null>(null);
+
+  const [refinedGraphUrl, setRefinedGraphUrl] = useState<string | null>(null);
+
+  const [monteCarloPlotUrl, setMonteCarloPlotUrl] = useState<string | null>(null);
+
+    // 🔍 add next to the other urls you already track
+  const [top10JsonUrl, setTop10JsonUrl] = useState<string | null>(null);
+
+
   const [logLines, setLogLines] = useState<string[]>([]);
   const eventSourceRef = useRef<EventSource | null>(null);
 
@@ -303,7 +315,10 @@ const MergedUnstructuredImport: React.FC = () => {
       eventSourceRef.current = null;
     }
     setShowGraphModal(false);
-    setGraphUrl(null);
+    setInitialGraphUrl(null);
+    setRefinedGraphUrl(null);
+    setTop10JsonUrl(null);
+    setMonteCarloPlotUrl(null);
     setLogLines([]);
   };
   
@@ -338,7 +353,11 @@ const MergedUnstructuredImport: React.FC = () => {
     /* 🔸 open / reset activity modal */
     setShowGraphModal(true);
     setLogLines([]);
-    setGraphUrl(null);
+    setInitialGraphUrl(null);
+    setTop10JsonUrl(null);
+    setRefinedGraphUrl(null);
+    setMonteCarloPlotUrl(null);
+
   
     try {
       /* kick off backend job */
@@ -371,7 +390,15 @@ const MergedUnstructuredImport: React.FC = () => {
         // Preview in the modal
         const fullUrl = `${BACKEND}${url}`;   // e.g. http://localhost:7860/static/src/Seed-Graph.html
         console.log("The full url is : ", fullUrl)
-        setGraphUrl(fullUrl);
+        if (name.toLowerCase().includes("seed")) {
+              setInitialGraphUrl(fullUrl);
+        } else if(name.toLowerCase().includes("combined")) {
+              setMonteCarloPlotUrl(fullUrl);
+        } else if(name.toLowerCase().includes("top10")) {
+            setTop10JsonUrl(fullUrl);
+        } else {
+            setRefinedGraphUrl(fullUrl);
+        }
 
         // still trigger browser download if you want to keep that behaviour
         // const a = document.createElement("a");
@@ -920,7 +947,10 @@ const MergedUnstructuredImport: React.FC = () => {
       {showGraphModal && (
         <GraphModal
           logLines={logLines}
-          graphUrl={graphUrl}
+          initialGraphUrl={initialGraphUrl}
+          refinedGraphUrl={refinedGraphUrl}
+          monteCarloPlotUrl={monteCarloPlotUrl}
+          top10Json={top10JsonUrl}
           onClose={handleCloseGraphModal}
         />
       )}

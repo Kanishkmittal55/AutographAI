@@ -848,6 +848,45 @@ ProgressCB = Callable[[str, int], None]  # (stage, percent) → None
 
 # into a tree of knowledge full of different cyher queries which satisfy different of application of this ground truth data.
 
+# ─── utils/refined_graph.py ──────────────────────────────────────────────
+import json, re, pandas as pd, networkx as nx
+from pathlib import Path
+from typing import Union
+
+def refined_df_to_graph_html(
+    df: pd.DataFrame,
+    html_name: str = "Refined-Graph.html"
+) -> Path:
+    """
+    Build a very simple ‘representative‑member  ➜  entry’ graph and save it
+    as an interactive PyVis HTML.  Returns the **absolute Path** to the file.
+    """
+
+    rows = []
+    for _, row in df.iterrows():
+        rep  = str(row.get("representative_member", "")).strip()
+        raw  = row.get("split_entries", "")
+        # split_entries may be a list or a comma‑separated string
+        if isinstance(raw, str):
+            entries = [x.strip() for x in re.split(r",|;|/|\n", raw) if x.strip()]
+        else:                          # already a list‑like
+            entries = [str(x).strip() for x in raw if str(x).strip()]
+
+        for ent in entries:
+            rows.append({
+                "node_1": json.dumps({"name": rep, "type": "representative"},   ensure_ascii=False),
+                "node_2": json.dumps({"name": ent, "type": "entry"},           ensure_ascii=False),
+                "edge"  : "has_entry"
+            })
+
+    dfg = pd.DataFrame(rows, columns=["node_1", "node_2", "edge"])
+    G   = build_knowledge_graph(dfg)
+
+    dst = Path(html_name).resolve()
+    create_pyvis_graph(G, dst.as_posix())
+    return dst
+
+
 def autograph_ai_pipeline(
     chunks: List[str],
     prompt: Optional[str] = None,
@@ -927,11 +966,26 @@ def autograph_ai_pipeline(
     emit("Monte‑Carlo deduplication and threshold selection", 75)
     full_df, _, _ = monte_carlo_analysis(refined_df, "MC_outputs")
 
+    monteCarloPlotName = "MC_outputs/combined_plot.png"
+    monteCarloPlot_url_path = f"/static/src/{monteCarloPlotName}"
+    emit(
+        "Monte Carlo Plot Ready",
+        80,
+        file_url=monteCarloPlot_url_path
+    )
+
     if full_df is None:
         raise RuntimeError("No Full‑Analysis threshold satisfied ‘no repeats’ – check the summary CSV.")
 
     emit("2nd Refinement Cycle to build the refined KG", 80)
     final_df = refine_deduplicated_dataframe(full_df, CHUNK_DATA, False)
+
+    # ▲▲▲  NEW – build & expose the refined graph  ▲▲▲
+    html_refined = refined_df_to_graph_html(final_df, "Refined-Graph.html")
+    emit("Refined KG ready",                 # SSE for the frontend
+         82,
+         file_url=f"/static/src/{html_refined.name}")
+    # ▲▲▲  end of insertion  ▲▲▲
 
     emit("Ground Truth Application – Detecting similar products from yesstyle.com", 90)
     reports = run_analysis_for_multiple_csvs(
@@ -943,15 +997,50 @@ def autograph_ai_pipeline(
         end_row_num=6340
     )
 
-    emit("Generating final reports", 95)
     for matched_path, summary_path in reports:
         # 2) matched‑products CSV
-        emit("Report ready", 98,
+        emit("Report ready", 91,
             file_url=f"/static/{Path(matched_path).name}")
 
         # 3) summary CSV
-        emit("Report ready", 99,
+        emit("Report ready", 92,
             file_url=f"/static/{Path(summary_path).name}")
+
+    topkfilename = "products_topk_matched_number_1.csv"
+    topkfile_url_path = f"/static/src/{topkfilename}" 
+    emit(
+        "Topk File ready",
+        94,
+        file_url=topkfile_url_path
+    )
+    # ----------------------------------------------------------
+    # NEW ❱  build + expose *Top‑10* as tiny JSON for frontend
+    # ----------------------------------------------------------
+    try:
+        # ➊ read the just‑written top‑K CSV
+        df_topk        = pd.read_csv(topkfilename).head(10)
+
+        # ➋ keep only the 3 fields the React modal needs
+        top10_json_rec = df_topk[["product_id",
+                                  "product_url",
+                                  "match_percentage"]]
+
+        json_name      = "products_top10_number_1.json"
+        top10_json_path = Path(json_name)            # on disk
+        top10_json_rec.to_json(top10_json_path,
+                               orient="records",
+                               force_ascii=False)
+
+        # ➌ push the URL to the client via the usual SSE ‘emit’
+        emit("Top‑10 JSON ready",
+             96,
+             file_url=f"/static/src/{json_name}")
+
+    except Exception as e:     # never abort the pipeline
+        print(f"[WARN] Top‑10‑JSON step failed → {e}")
+
+    emit("Generated final reports", 97)
+
 
     emit("Done", 100)
     return str(html_abs_path)
@@ -1883,61 +1972,6 @@ def _embed_retrieve(query: str, chunk_data: List[Dict[str,Any]], top_k: int) -> 
     scored.sort(key=lambda x: x[1], reverse=True)
     final = scored[:top_k]
     return [x[0]["text"] for x in final]
-    
-
-# async def get_info_via_agent(name: str, search_terms: str) -> dict:
-#     """
-#     Use the browser agent to search the internet (Incidecoder, CosDNA, Google) for the ingredient name with given keywords.
-#     Returns a dictionary with keys: Name, Synonyms, StandardName, Role, Citation if successful, otherwise an empty dict.
-#     """
-#     # Build a detailed task prompt for the agent
-#     agent_task = (
-#         f"Search for cosmetic ingredient '{name}' using relevant keywords: {search_terms}. "
-#         "Focus on finding:\n"
-#         "- Synonyms or alternate names and functional roles\n"
-#         "- Corrected standard INCI name (if the given name is non-standard) and INCI functional roles\n"
-#         "- Functional role in cosmetics (e.g., preservative, emollient)\n"
-#         "- A reliable source or citation for these details\n\n"
-#         "Use Incidecoder, CosDNA, or other reputable sources via Google. "
-#         "If found, return the information as a JSON object with keys 'Name', 'Synonyms', 'StandardName','FunctionalRole', 'Citation'. "
-#         "Ensure the information is verified and provide a citation URL or reference in the 'Citation' field."
-#     )
-#     # Initialize an agent with the task and run it
-#     agent = Agent(task=agent_task, llm=llm, browser_context=context, generate_gif=False)
-#     try:
-#         result = await agent.run()  # run the agent asynchronously
-#         final_res = result.final_result()
-#     except Exception as e:
-#         print(f"[Error] Agent search failed for {name}: {e}")
-#         return {}
-    
-#     if final_res:
-#         # Try to parse the result as JSON
-#         import json
-#         try:
-#             info = json.loads(final_res)
-#             # Ensure the Name field is present; if not, add it
-#             if "Name" not in info:
-#                 info["Name"] = name
-#             return info
-#         except json.JSONDecodeError:
-#             # If result is not a perfect JSON (LLM might return formatted text), handle simple parsing
-#             text = result.strip()
-#             # Basic parsing: find synonyms, standard name, role, citation in text
-#             info = {"Name": name, "Synonyms": None, "StandardName": None, "FunctionalRole": None, "Citation": None}
-#             for key in info.keys():
-#                 if key == "Name":
-#                     continue
-#                 idx = text.lower().find(key.lower())
-#                 if idx != -1:
-#                     # Extract the line or segment after the key:
-#                     segment = text[idx:].split(':', 1)
-#                     if len(segment) > 1:
-#                         value = segment[1].split('\n', 1)[0]
-#                         info[key] = value.strip().strip('", ')
-#             return info
-#     else:
-#         return {}
 
 def fallback_data(name: str) -> dict:
     """
@@ -3602,13 +3636,13 @@ def run_analysis_for_one_patent(
         "patent_number","product_id","product_name","product_url","match_percentage","matched_ingredients_map"
     ])
 
-    heading_line = (
-        f"# Patent Number: {patent_num}, Only Claim: {only_claim_str}, "
-        f"Comprehension Level: {comprehension_level_str}\n"
-    )
-    with open(matched_csv_filename, "w", encoding="utf-8") as f:
-        f.write(heading_line)
-    df_final_topk.to_csv(matched_csv_filename, index=False, mode="a", encoding="utf-8")
+    # heading_line = (
+    #     f"# Patent Number: {patent_num}, Only Claim: {only_claim_str}, "
+    #     f"Comprehension Level: {comprehension_level_str}\n"
+    # )
+    # with open(matched_csv_filename, "w", encoding="utf-8") as f:
+    #     f.write(heading_line)
+    df_final_topk.to_csv(matched_csv_filename, index=False, encoding="utf-8")
     print(f"[INFO] Saved top-K CSV => '{matched_csv_filename}'")
 
     # Write products_topk_summary_{patent_num}.csv
@@ -3641,13 +3675,13 @@ def run_analysis_for_one_patent(
 
     df_summary = pd.DataFrame(summary_rows)
 
-    heading_line2 = (
-        f"# Patent Number: {patent_num}, Only Claim: {only_claim_str}, "
-        f"Comprehension Level: {comprehension_level_str}\n"
-    )
-    with open(summary_csv_filename, "w", encoding="utf-8") as f:
-        f.write(heading_line2)
-    df_summary.to_csv(summary_csv_filename, index=False, mode="a", encoding="utf-8")
+    # heading_line2 = (
+    #     f"# Patent Number: {patent_num}, Only Claim: {only_claim_str}, "
+    #     f"Comprehension Level: {comprehension_level_str}\n"
+    # )
+    # with open(summary_csv_filename, "w", encoding="utf-8") as f:
+    #     f.write(heading_line2)
+    df_summary.to_csv(summary_csv_filename, index=False, encoding="utf-8")
     print(f"[INFO] Saved summary CSV => '{summary_csv_filename}'")
       # --- return the two files so callers (or FastAPI background task)
     #     can hand them to the frontend for download -------------------

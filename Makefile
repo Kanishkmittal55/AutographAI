@@ -8,6 +8,7 @@ NEO4J_PASSWORD=your12345# Replace with your actual password
 
 # Targets
 up:
+	docker-compose -f $(COMPOSE_FILE) down
 	docker-compose -f $(COMPOSE_FILE) up -d
 
 down:

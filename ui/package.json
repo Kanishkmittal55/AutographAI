@@ -38,6 +38,7 @@
     "jszip": "^3.10.1",
     "nanoid": "^4.0.2",
     "neo4j-driver": "^5.27.0",
+    "papaparse": "^5.5.2",
     "pdfjs-dist": "^4.4.168",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
