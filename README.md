@@ -28,7 +28,7 @@ To simplify the process of running the demos, we have incorporated scripts that 
 
 1. Navigate into the root directory.
 2. Create an env file. You can use the env.example file as a template. (The open API key is optional and can be provided from the UI instead)
-3. run `docker-compose up` to build the images.
+3. run `make up` to build the images.
 
 This will start the backend and frontend servers, and you can access the demos at the following URLs:
 
@@ -53,13 +53,6 @@ database: companies
 
 The database contains both structured information about organizations and people as well as news articles.
 The news articles are linked to the mentioned entity, while the actual text is stored in the `Chunk` nodes alongside their _text-embedding-ada-002_ vector representations.
-
-## Bring your own database
-
-To run the project on your own database, follow these two steps:
-
-1. Set appropriate database credentials in `.env` file
-2. Remove or set appropriate Cypher examples in `api/fewshot_examples.py` file 
 
 ## Contributing
 
