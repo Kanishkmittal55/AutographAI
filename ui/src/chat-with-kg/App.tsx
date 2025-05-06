@@ -6,6 +6,7 @@ import ChatInput from "./ChatInput";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import KeyModal from "../components/keymodal";
 import type {
+  ContextHit,
   ConversationState,
   WebSocketRequest,
   WebSocketResponse,
@@ -56,8 +57,8 @@ const chatMessageObjects: ChatMessageObject[] = SEND_REQUESTS
       ];
 
 const URI =
-  import.meta.env.VITE_KG_CHAT_BACKEND_ENDPOINT ??
-  "ws://localhost:7860/text2text";
+import.meta.env.VITE_KG_CHAT_BACKEND_ENDPOINT
+?? "ws://localhost:7860/text2text";
 
   const OLLAMA_URI =
   import.meta.env.VITE_KG_CHAT_BACKEND_ENDPOINT_OLLAMA ??
@@ -101,11 +102,24 @@ function App() {
 
   const [ollamaConversationState, setOllamaConversationState] = useState<ConversationState>("ready");  // ConversationState = "waiting" | "streaming" | "ready" | "error";
 
+  // ──────────────────────────────────────────────
+  //  semantic‑search / context‑window state
+  // ──────────────────────────────────────────────
+  const [contextHits, setContextHits] = useState<ContextHit[]>([]);
+  const [nGram,       setNGram]       = useState(3);   // UI slider
+  const [topK,        setTopK]        = useState(10);  // UI slider
+
   // useWebSocket hook, manage websocket connection in a react application.
   // On the LHS we have the returned properties , and on the RHS we have the useWebSocket(URI, options) hook 
   const { sendJsonMessage, lastMessage, readyState } = useWebSocket(URI, {
-    shouldReconnect: () => true, // The options
+    shouldReconnect: () => true,
     reconnectInterval: 5000,
+    onOpen: () => {
+      console.log(`✅ WebSocket open on ${URI}`);
+    },
+    onError: (event) => {
+      console.error(`❌ WebSocket error connecting to ${URI}`, event);
+    },
   });
 
   const { sendJsonMessage: sendOllamaJsonMessage, lastMessage: ollamaLastMessage, readyState: ollamaReadyState } = useWebSocket(OLLAMA_URI, {
@@ -198,6 +212,17 @@ function App() {
     );
   }, []);
 
+  const TOPK_CONTEXT = 3;          // always request 3 hits
+
+    /** ask backend for semantic hits via the SAME websocket */
+  const fetchContext = (q: string) => {
+    sendJsonMessage({
+      type    : "semantic",
+      question: q,
+      top_k   : TOPK_CONTEXT
+    });
+  };
+
   // Gpt 4 state control
   useEffect(() => {
     if (!lastMessage || !serverAvailable) {
@@ -205,8 +230,10 @@ function App() {
     }
 
     const websocketResponse = JSON.parse(lastMessage.data) as WebSocketResponse;
-
-    if (websocketResponse.type === "debug") {
+    console.log(websocketResponse.type)
+    if (websocketResponse.type === "semantic") {
+          setContextHits(websocketResponse.matches || []);
+    } else if (websocketResponse.type === "debug") {
       console.log(websocketResponse.detail);
     } else if (websocketResponse.type === "error") {
       setConversationState("error");
@@ -369,83 +396,95 @@ function App() {
     sendOllamaJsonMessage(webSocketRequest);
   };
 
-  const onChatInput = async (message: string) => {
-    // if (conversationState === "ready") {
-    //   setChatMessages((chatMessages) =>
-    //     chatMessages.concat([
-    //       {
-    //         id: Date.now() + Math.random(),
-    //         type: "input",
-    //         sender: "self",
-    //         message: message,
-    //         complete: true,
-    //       },
-    //     ])
-    //   );
-    //   if (SEND_REQUESTS) {
-    //     setConversationState("waiting");
-    //     sendQuestion(message);
-    //   }
-    //   setErrorMessage(null);
-    // }
+  const onChatInput = (message: string) => {
+    if (conversationState !== "ready") return;
+  
+    // 1) show the user’s message
+    setChatMessages((msgs) => [
+      ...msgs,
+      {
+        id:    msgs.length,
+        type:  "input",
+        sender:"self",
+        message,
+        complete: true,
+      },
+    ]);
+  
+    // 2) switch to “waiting”
+    setConversationState("waiting");
+    setErrorMessage(null);
+  
+    // 3) ask for semantic hits
+    sendJsonMessage({
+      type:     "semantic",
+      question: message,
+      top_k:    TOPK_CONTEXT,   // e.g. 3
+    });
+  };
+  
 
-    if (conversationState === "ready") {
-      // Add user message to the chat
-      setChatMessages((chatMessages) =>
-        chatMessages.concat([
-          {
-            id: Date.now() + Math.random(),
-            type: "input",
-            sender: "self",
-            message: message,
-            complete: true,
-          },
-        ])
-      );
 
-      if (SEND_REQUESTS) {
-        setConversationState("waiting");
-        try {
-          // Call FastAPI endpoint for OpenAI
-          const openaiResponse = await fetch("http://localhost:7860/openai/cyphered", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              model: "auto", // Model name
-              prompt: message, // The user's message
-            }),
-          });
+  // const onChatInput = async (message: string) => {
+  //   if (conversationState === "ready") {
+  //     // Add user message to the chat
+  //     setChatMessages((chatMessages) =>
+  //       chatMessages.concat([
+  //         {
+  //           id: Date.now() + Math.random(),
+  //           type: "input",
+  //           sender: "self",
+  //           message: message,
+  //           complete: true,
+  //         },
+  //       ])
+  //     );
 
-          // Parse the response
-          if (openaiResponse.ok) {
-            const data = await openaiResponse.json();
+  //     if (SEND_REQUESTS) {
+  //       setConversationState("waiting");
+  //       try {
+  //         // Call FastAPI endpoint for OpenAI
+  //         const openaiResponse = await fetch("http://localhost:7860/text2text", {
+  //           method: "POST",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //           },
+  //           body: JSON.stringify({
+  //             model: "auto", // Model name
+  //             prompt: message, // The user's message
+  //           }),
+  //         });
 
-            // Add OpenAI's response to the chat
-            setChatMessages((chatMessages) => [
-              ...chatMessages,
-              {
-                id: chatMessages.length,
-                type: "text",
-                sender: "openai",
-                message: data,
-                complete: true,
-              },
-            ]);
-          } else {
-            console.error("Error with OpenAI API:", await openaiResponse.text());
-          }
-        } catch (error) {
-          console.error("Error with OpenAI:", error);
-        }
-        setErrorMessage(null);
-        setConversationState("ready");
-      }
-    }
+  //         fetchContext(message)
+
+  //         // Parse the response
+  //         if (openaiResponse.ok) {
+  //           const data = await openaiResponse.json();
+
+  //           // Add OpenAI's response to the chat
+  //           setChatMessages((chatMessages) => [
+  //             ...chatMessages,
+  //             {
+  //               id: chatMessages.length,
+  //               type: "text",
+  //               sender: "openai",
+  //               message: data,
+  //               complete: true,
+  //             },
+  //           ]);
+  //         } else {
+  //           console.error("Error with OpenAI API:", await openaiResponse.text());
+  //         }
+  //       } catch (error) {
+  //         console.error("Error with OpenAI:", error);
+  //       }
+  //       setErrorMessage(null);
+  //       setConversationState("ready");
+  //     }
+  //   }
 
     
-  };
+  // };
 
   const onOllamaChatInput = async (message: string) => {
     if (ollamaConversationState === "ready") {
@@ -575,235 +614,130 @@ function App() {
     setText2cypherModel(e.target.value)
   }
 
+
+
+
   return (
-    <div className="flex flex-row min-h-screen">
-  {/* Left Side - API Key and Divider */}
-  <div className="flex flex-col bg-gray-100 border-2 border-gray-400 resize-x overflow-auto w-[10%] h-screen">
-    <div className="flex flex-col h-full bg-gray-100 overflow-y-auto">
-      {needsApiKey && (
-        <div className="flex justify-center items-center py-4">
-          <button
-            className="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600"
-            onClick={openModal}
-          >
-            API Key
-          </button>
-        </div>
-      )}
 
-      <div className="flex items-center gap-2 p-4">
-        <label htmlFor="compareToggle" className="text-gray-700">
-          Compare Mode
-        </label>
-        <input
-          id="compareToggle"
-          type="checkbox"
-          className="toggle-checkbox"
-          checked={compareMode}
-          onChange={() => setCompareMode(!compareMode)}
-        />
-      </div>
-      <div className="border-t border-gray-300 flex-grow"></div>
-    </div>
-  </div>
-
-  {/* Center Section */}
-  <div className="flex flex-col border-2 border-gray-400 resize-x overflow-auto w-[45%] h-screen">
-    {/* Window Header */}
-    <div className="flex justify-between items-center bg-gray-800 text-white p-2">
-      <span>Chat Window</span>
-      <select
-        value={text2cypherModel}
-        onChange={handleModelChange}
-        className="bg-gray-100 border border-gray-300 text-gray-700 py-1 px-2 rounded focus:outline-none"
+      <Split
+        className="flex h-screen overflow-hidden"
+        sizes={[40, 60]}          // graph | context | chat
+        minSize={[320, 350]}
+        gutterSize={8}
       >
-        <option value="gpt-4o">gpt-3.5-turbo</option>
-        <option value="gpt-4">gpt-4</option>
-      </select>
-    </div>
-
-    {/* Chat Messages */}
-    <div className="flex-grow overflow-y-auto p-4 bg-white border-t border-gray-300">
-      {!serverAvailable && <div>Server is unavailable, please reload the page to try again.</div>}
-      {serverAvailable && needsApiKeyLoading && <div>Initializing...</div>}
-      <KeyModal
-        isOpen={showContent && needsApiKey && modalIsOpen}
-        onCloseModal={onCloseModal}
-        onApiKeyChanged={onApiKeyChange}
-        apiKey={apiKey}
-      />
-      {showContent && readyState === ReadyState.OPEN && (
-        // We provide the same component the messages generated from the gpt 4 api
-        <ChatContainer chatMessages={chatMessages} loading={conversationState === "waiting"} />
-      )}
-      {showContent && readyState === ReadyState.CONNECTING && <div>Connecting...</div>}
-      {showContent && readyState === ReadyState.CLOSED && (
-        <div className="flex flex-col">
-          <div>Could not connect to server, reconnecting...</div>
-        </div>
-      )}
-    </div>
-
-    {/* Input Section */}
-    <div className="bg-gray-100 border-t border-gray-300 p-4">
-      <ChatInput
-        onChatInput={onChatInput}
-        loading={conversationState === "waiting"}
-        sampleQuestions={sampleQuestions}
-      />
-      {sampleQuestions && sampleQuestions.length > 0 && (
-        <div className="flex items-center justify-between mt-2 bg-gray-200 rounded-md px-4 py-2 shadow-md">
-          <button
-            className="ndl-icon-btn ndl-large"
-            onClick={sampleQuestionLeft}
-            disabled={sampleQuestionIndex <= 0}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#000"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polyline points="15 18 9 12 15 6" />
-            </svg>
-          </button>
-          <div
-            className="flex-grow text-center truncate text-sm"
-            style={{
-              fontSize: "clamp(12px, 2vw, 16px)", // Adjust font size dynamically
-            }}
-          >
-            {sampleQuestions[sampleQuestionIndex]}
+    
+        {/* ───────── LEFT  –  refined graph viewer ───────── */}
+        <div className="flex flex-col bg-gray-900">
+          <div className="px-3 py-2 bg-gray-800 text-white text-sm font-semibold">
+            Refined Graph
           </div>
-          <button
-            className="ndl-icon-btn ndl-large"
-            onClick={sampleQuestionRight}
-            disabled={sampleQuestionIndex >= sampleQuestions.length - 1}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#000"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
-          </button>
+          <iframe
+            src="http://localhost:7860/static/src/Refined-Graph.html"
+            className="flex-1 border-0"
+            title="Refined Graph"
+          />
         </div>
-      )}
-    </div>
-  </div>
-
-  {/* Right Side - Local LLM Side */}
-  <div className="flex flex-col border-2 border-gray-400 resize-x overflow-auto w-[45%] h-screen">
-    {/* Window Header */}
-    <div className="flex justify-between items-center bg-gray-800 text-white p-2">
-      <span>Open Source LLM Training Console</span>
-      <select
-        value={ollamaText2cypherModel}
-        onChange={handleModelChange}
-        className="bg-gray-100 border border-gray-300 text-gray-700 py-1 px-2 rounded focus:outline-none"
-      >
-        <option value="llama3.1-8b">llama3.1-8b</option>
-        <option value="groq-api">groq-api</option>
-      </select>
-    </div>
-
-    {/* Console Content */}
-    <div className="flex-grow overflow-y-auto p-4 bg-white border-t border-gray-300">
-      {!serverAvailable && <div>Server is unavailable, please reload the page to try again.</div>}
-      {serverAvailable && needsApiKeyLoading && <div>Initializing...</div>}
-      <KeyModal
-        isOpen={showContent && needsApiKey && modalIsOpen}
-        onCloseModal={onCloseModal}
-        onApiKeyChanged={onApiKeyChange}
-        apiKey={apiKey}
-      />
-      {showContent && ollamaReadyState === ReadyState.OPEN && (
-        // We provide the same component the messages generated from the llama 3.2 model using ollama api
-        <ChatContainer chatMessages={chatOllamaMessages} loading={ollamaConversationState === "waiting"} />
-      )}
-      {showContent && ollamaReadyState === ReadyState.CONNECTING && <div>Connecting...</div>}
-      {showContent && ollamaReadyState === ReadyState.CLOSED && (
+    
+        {/* ───────── RIGHT  –  chat (unchanged) ───────── */}
         <div className="flex flex-col">
-          <div>Could not connect to server, reconnecting...</div>
-        </div>
-      )}
-    </div>
-
-    {/* Input Section */}
-    <div className="bg-gray-100 border-t border-gray-300 p-4">
-      <ChatInput
-        onChatInput={onOllamaChatInput}
-        loading={ollamaConversationState === "waiting"}
-        sampleQuestions={sampleQuestions}
-      />
-      {sampleQuestions && sampleQuestions.length > 0 && (
-        <div className="flex items-center justify-between mt-2 bg-gray-200 rounded-md px-4 py-2 shadow-md">
-          <button
-            className="ndl-icon-btn ndl-large"
-            onClick={sampleQuestionLeft}
-            disabled={sampleQuestionIndex <= 0}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#000"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+          {/* Window Header */}
+            <div className="flex justify-between items-center bg-gray-800 text-white p-2">
+            <span>Chat Window</span>
+            <select
+              value={text2cypherModel}
+              onChange={handleModelChange}
+              className="bg-gray-100 border border-gray-300 text-gray-700 py-1 px-2 rounded focus:outline-none"
             >
-              <polyline points="15 18 9 12 15 6" />
-            </svg>
-          </button>
-          <div
-            className="flex-grow text-center truncate text-sm"
-            style={{
-              fontSize: "clamp(12px, 2vw, 16px)", // Adjust font size dynamically
-            }}
-          >
-            {sampleQuestions[sampleQuestionIndex]}
-          </div>
-          <button
-            className="ndl-icon-btn ndl-large"
-            onClick={sampleQuestionRight}
-            disabled={sampleQuestionIndex >= sampleQuestions.length - 1}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#000"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
-          </button>
+              <option value="gpt-4o">gpt-3.5-turbo</option>
+              <option value="gpt-4">gpt-4</option>
+            </select>
+            </div>
+
+            {/* Chat Messages */}
+            <div className="flex-grow overflow-y-auto p-4 bg-white border-t border-gray-300">
+            {!serverAvailable && <div>Server is unavailable, please reload the page to try again.</div>}
+            {serverAvailable && needsApiKeyLoading && <div>Initializing...</div>}
+            <KeyModal
+              isOpen={showContent && needsApiKey && modalIsOpen}
+              onCloseModal={onCloseModal}
+              onApiKeyChanged={onApiKeyChange}
+              apiKey={apiKey}
+            />
+            {showContent && readyState === ReadyState.OPEN && (
+              // We provide the same component the messages generated from the gpt 4 api
+              <ChatContainer chatMessages={chatMessages} loading={conversationState === "waiting"} />
+            )}
+            {showContent && readyState === ReadyState.CONNECTING && <div>Connecting...</div>}
+            {showContent && readyState === ReadyState.CLOSED && (
+              <div className="flex flex-col">
+                <div>Could not connect to server, reconnecting...</div>
+              </div>
+            )}
+            </div>
+
+            {/* Input Section */}
+            <div className="bg-gray-100 border-t border-gray-300 p-4">
+            <ChatInput
+              onChatInput={onChatInput}
+              loading={conversationState === "waiting"}
+              sampleQuestions={sampleQuestions}
+            />
+            {sampleQuestions && sampleQuestions.length > 0 && (
+              <div className="flex items-center justify-between mt-2 bg-gray-200 rounded-md px-4 py-2 shadow-md">
+                <button
+                  className="ndl-icon-btn ndl-large"
+                  onClick={sampleQuestionLeft}
+                  disabled={sampleQuestionIndex <= 0}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#000"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polyline points="15 18 9 12 15 6" />
+                  </svg>
+                </button>
+                <div
+                  className="flex-grow text-center truncate text-sm"
+                  style={{
+                    fontSize: "clamp(12px, 2vw, 16px)", // Adjust font size dynamically
+                  }}
+                >
+                  {sampleQuestions[sampleQuestionIndex]}
+                </div>
+                <button
+                  className="ndl-icon-btn ndl-large"
+                  onClick={sampleQuestionRight}
+                  disabled={sampleQuestionIndex >= sampleQuestions.length - 1}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#000"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
+                </button>
+              </div>
+            )}
+            </div>
         </div>
-      )}
-    </div>
-  </div>
-</div>
-
-
+    
+      </Split>
   );
+    
 }
 
 export default App;

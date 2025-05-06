@@ -6,7 +6,7 @@ import logging
 import networkx as nx
 from datetime import datetime
 from typing import List, Optional, Dict
-
+import pandas as pd
 
 from components.question_proposal_generator import (
     QuestionProposalGenerator,
@@ -14,6 +14,8 @@ from components.question_proposal_generator import (
 import json
 import re
 from components.ollama_prompt_creator import run_with_chunk_logging
+# ─── back in main.py (add near the top, after imports) ───────────────
+from components.ollama_prompt_creator import EMBED_LOCK, Embedder
 from components.ollama_prompt_creator import autograph_ai_pipeline
 from components.ollama_prompt_creator import product_discovery_workflow
 from components.self_attention_chunking_workflow import self_attention_chunking
@@ -87,12 +89,12 @@ neo4j_connection = Neo4jDatabase(
     database=os.environ.get("NEO4J_DATABASE", "neo4j"),
 )
 
-openai_api_key = os.getenv("OPENAI_API_KEY")
-if not openai_api_key:
+openai_key = os.getenv("OPENAI_API_KEY")
+if not openai_key:
     raise RuntimeError("Missing OPENAI_API_KEY in environment")
 
 # Initialize LLM modules
-openai_api_key = openai_api_key
+openai_api_key = openai_key
 
 # Define FastAPI endpoint
 app = FastAPI()
@@ -110,6 +112,43 @@ app.add_middleware(
 )
 
 app.mount("/static", StaticFiles(directory="/api"), name="static")
+
+
+def parse_entries(x):
+    if isinstance(x, list):
+        return x
+    if not isinstance(x, str):
+        return []
+    x = x.strip()
+    # 1) if it looks like JSON, try json.loads
+    if x.startswith("[") and x.endswith("]"):
+        try:
+            return json.loads(x)
+        except json.JSONDecodeError:
+            pass
+    # 2) otherwise, split on commas
+    #    or just wrap single string in a list
+    return [item.strip() for item in x.split(",") if item.strip()]
+
+@app.on_event("startup")
+def build_semantic_index():
+    df_embed = pd.read_csv("./components/refined_df_latest.csv")
+    # you can customise what constitutes “text”
+    rows = []
+    for _, r in df_embed.iterrows():
+        entries = parse_entries(r["split_entries"])
+        text = f"{r['representative_member']} " + " ".join(entries)
+        rows.append({
+            "text":   text,
+            "labels": ["refined"],
+            "name":   r["representative_member"][:60],
+        })
+    with EMBED_LOCK:
+        Embedder.records.clear()
+        Embedder.emb = None
+        Embedder.add_records(rows)
+    print(f"[semantic] re-indexed {len(rows)} refined rows")
+    print(f"[startup] loaded {len(rows)} records into semantic index")
 
 @app.get("/lightrag/chunks")
 def get_lightrag_chunks():
@@ -176,110 +215,141 @@ async def questionProposalsForCurrentDb(payload: questionProposalPayload):
 
 @app.get("/hasapikey")
 async def hasApiKey():
-    return JSONResponse(content={"output": openai_api_key is not None})
+    if openai_api_key:
+        return JSONResponse(content={
+            "output": True,
+            "key": openai_api_key
+        })
+    else:
+        return JSONResponse(content={
+            "output": False,
+            "key": None,
+            "message": "No API key detected"
+        })
+
+
+class SemanticSearchPayload(BaseModel):
+    q: str
+    top_k: int = 10
+    n_gram: int = 3   # (UI slider only)
+
+
+def semantic_search(body: SemanticSearchPayload):
+    if not body.q.strip():
+        raise HTTPException(status_code=400, detail="Empty query")
+
+    with EMBED_LOCK:
+        results = Embedder.search(body.q, body.top_k)
+
+    return {"matches": results}
 
 
 @app.websocket("/text2text")
 async def websocket_endpoint(websocket: WebSocket):
-    
-    # Helper Functions - To send specific types of messages back to the client over the WebSocket.
-    async def sendDebugMessage(message): 
-        await websocket.send_json({"type": "debug", "detail": message})
+    """
+    Single handler for semantic + LLM.  Sends back:
+      - {"type":"debug", detail:...} at handshake
+      - {"type":"start"} when LLM begins
+      - {"type":"stream", output: chunk} for each token
+      - {"type":"end", output: null} when done
+      - {"type":"error", detail:...} on any user or server error
+    """
+    # helper senders
+    async def sendDebugMessage(msg: str):
+        await websocket.send_json({"type": "debug", "detail": msg})
 
-    async def sendErrorMessage(message):
-        await websocket.send_json({"type": "error", "detail": message})
+    async def sendErrorMessage(msg: str):
+        await websocket.send_json({"type": "error", "detail": msg})
 
     async def onToken(token):
-        delta = token["choices"][0]["delta"]
-        if "content" not in delta:
-            return
-        content = delta["content"]
-        if token["choices"][0]["finish_reason"] == "stop":
-            await websocket.send_json({"type": "end", "output": content})
-        else:
-            await websocket.send_json({"type": "stream", "output": content})
+        """
+        Called for each streamed chunk from OpenAIChat.generateStreaming.
+        token will be a dict with choices[0].delta.content etc.
+        """
+        delta = token.choices[0].delta  # using modern openai-python Client
+        content = getattr(delta, "content", None)
+        if content:
+            # if finish reason is stop, send an end packet
+            if getattr(token.choices[0], "finish_reason", None) == "stop":
+                await websocket.send_json({"type": "end", "output": content})
+            else:
+                await websocket.send_json({"type": "stream", "output": content})
 
-        # await websocket.send_json({"token": token})
-
-    # Main code
+    # accept connection
     await websocket.accept()
     await sendDebugMessage("connected")
     chatHistory = []
+
     try:
-        # Infinite loop to keep the websocket open and continuously listens for messages from the client.
         while True:
-
             data = await websocket.receive_json()
-            if not openai_api_key and not data.get("api_key"):
-                raise HTTPException(
-                    status_code=422,
-                    detail="Please set OPENAI_API_KEY environment variable or send it as api_key in the request body",
-                )
-            api_key = openai_api_key if openai_api_key else data.get("api_key")
+            print("The Type of data : ", data.get("type"))
 
-
-            default_llm = OpenAIChat(
-                openai_api_key=api_key,
-                model_name=data.get("model_name", "gpt-4o"),
-            )
-
-            summarize_results = SummarizeCypherResult(
-                llm=OpenAIChat(
-                    openai_api_key=api_key,
-                    model_name="gpt-4o",
-                    max_tokens=128,
-                )
-            )
-
-            text2cypher = Text2Cypher(
-                database=neo4j_connection,
-                llm=default_llm,
-                cypher_examples=get_fewshot_examples(api_key),
-            )
-
-            if "type" not in data:
-                await websocket.send_json({"error": "missing type"})
+            # only one frame type now
+            if data.get("type") != "semantic":
+                await sendErrorMessage("expecting semantic frame")
                 continue
-            if data["type"] == "question":
-                try:
-                    question = data["question"]
-                    chatHistory.append({"role": "user", "content": question})
-                    await sendDebugMessage("received question: " + question)
-                    results = None
-                    try:
-                        results = text2cypher.run(question, chatHistory)
-                        print("results", results)
-                    except Exception as e:
-                        await sendErrorMessage(str(e))
-                        continue
-                    if results == None:
-                        await sendErrorMessage("Could not generate Cypher statement")
-                        continue
 
-                    await websocket.send_json(
-                        {
-                            "type": "start",
-                        }
-                    )
-                    output = await summarize_results.run_async(
-                        question,
-                        results["output"][:HARD_LIMIT_CONTEXT_RECORDS],
-                        callback=onToken,
-                    )
-                    chatHistory.append({"role": "system", "content": output})
-                    await websocket.send_json(
-                        {
-                            "type": "end",
-                            "output": output,
-                            "generated_cypher": results["generated_cypher"],
-                        }
-                    )
-                except Exception as e:
-                    await sendErrorMessage(str(e))
-                await sendDebugMessage("output done")
+            # print("The Type of data : ", data.get("type"))
+
+            question = (data.get("question") or "").strip()
+            await sendDebugMessage("received question: " + question)
+
+            top_k     = int(data.get("top_k", 3))
+
+            if not question:
+                await sendErrorMessage("empty question")
+                continue
+
+            # 1) semantic search
+            with EMBED_LOCK:
+                matches = Embedder.search(question, top_k)
+
+            # 2) build prompt
+            context_text = "\n".join(
+                f"- {m['preview']}  (score {m['score']:.3f})"
+                for m in matches
+            )
+
+            print("The matches are :", matches)
+            full_prompt = (
+                f"# Question:\n{question}\n\n"
+                f"# Context matches:\n{context_text}\n\n"
+                "# Instructions:\n"
+                "Use the context above to answer as best as you can."
+            )
+
+            # 3) record user turn & notify client we're starting
+            chatHistory.append({"role": "user", "content": full_prompt})
+            await websocket.send_json({"type": "start"})
+
+            # 4) stream from OpenAI
+            llm = OpenAIChat(
+                openai_api_key=openai_key,
+                model_name="gpt-4o"
+            )
+            # this will invoke onToken() for each chunk
+            await llm.generateStreaming(
+                [{"role": "user", "content": full_prompt}],
+                onTokenCallback=onToken
+            )
+
+            # 5) record assistant turn
+            chatHistory.append({"role": "assistant", "content": full_prompt})
+
+            await websocket.send_json({"type": "end"})
+            await sendDebugMessage("output done")
+
     except WebSocketDisconnect:
-        print("disconnected")
-
+        print("🔌 client disconnected")
+    except Exception as e:
+        # any other error
+        await sendErrorMessage(f"server error: {e}")
+        print("❌", e)
+        try:
+            await websocket.close()
+        except:
+            pass
 
 # Initialize the OllamaChat instance
 ollama_chat = OllamaChat(model_name="llama3.1", max_tokens=1000, temperature=0.7)
@@ -465,6 +535,10 @@ async def process_chunks_and_create_graph(
         JobStatus[job_id].update(status="Error", progress=100)
         JobStatus[job_id]["logs"].append(f"✖︎ Error: {exc}")
         raise
+
+
+
+
 
 
 @app.post("/chunksToKG")

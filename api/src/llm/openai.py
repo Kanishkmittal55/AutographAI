@@ -30,7 +30,7 @@ class OpenAIChat(BaseLLM):
         messages: List[str],
     ) -> str:
         try:
-            completions = openai.ChatCompletion.create(
+            completions = openai.chat.completions.create(
                 model=self.model,
                 temperature=self.temperature,
                 max_tokens=self.max_tokens,
@@ -52,22 +52,24 @@ class OpenAIChat(BaseLLM):
         messages: List[str],
         onTokenCallback=Callable[[str], None],
     ) -> str:
-        result = []
-        completions = openai.ChatCompletion.create(
+        full_output = ""
+        stream = openai.chat.completions.create(
             model=self.model,
             temperature=self.temperature,
             max_tokens=self.max_tokens,
             messages=messages,
             stream=True,
         )
-        result = []
-        for message in completions:
-            # Process the streamed messages or perform any other desired action
-            delta = message["choices"][0]["delta"]
-            if "content" in delta:
-                result.append(delta["content"])
-            await onTokenCallback(message)
-        return result
+        print("The stream is : ", stream)
+        for chunk in stream:
+            delta = chunk.choices[0].delta 
+            # If there's new text, append it
+            content = getattr(delta, "content", None)
+            if content:
+                full_output += content
+                # Invoke your websocket token handler
+                await onTokenCallback(chunk)
+        return full_output
 
     def num_tokens_from_string(self, string: str) -> int:
         encoding = tiktoken.encoding_for_model(self.model)

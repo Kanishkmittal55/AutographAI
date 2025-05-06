@@ -396,8 +396,10 @@ const MergedUnstructuredImport: React.FC = () => {
               setMonteCarloPlotUrl(fullUrl);
         } else if(name.toLowerCase().includes("top10")) {
             setTop10JsonUrl(fullUrl);
-        } else {
+        } else if(name.toLowerCase().includes("refined")) {
             setRefinedGraphUrl(fullUrl);
+        } else {
+            console.log("Error the link is not recognized :", fullUrl)
         }
 
         // still trigger browser download if you want to keep that behaviour

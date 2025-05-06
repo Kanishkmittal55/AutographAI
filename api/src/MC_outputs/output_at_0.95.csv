@@ -1,10 +1,11 @@
 NAME,PLACEHOLDER,ROLE_OF_PLACEHOLDER,STANDARD_NAMES,SOURCE_SUPPLIER,SUPPLYING_COMPANY,FUNCTIONAL_ROLES,MENTIONED_EXAMPLES,IS_ACTIVE_INGREDIENT,IS_STRUCTURAL_COMPONENT
-mineral salt,,,"calcium chloride, lithium chloride, magnesium chloride, potassium chloride, sodium chloride",,,"structural component, structural_component, viscosity modifier","calcium chloride, calcium sulfate, lithium chloride, lithium sulfate, magnesium chloride, magnesium sulfate, potassium nitrate, potassium sulfate, sodium sulfate",False,True
-hydrous gel composition,,,,,,emulsion stabilizer,"vitreoscilla ferment, silica, boron nitride",False,True
-water insoluble active ingredient,,,"vitreoscilla ferment, silica, boron nitride",,,skin conditioning agent,"vitreoscilla ferment, silica, boron nitride",True,False
-crosslinked acrylic acid homopolymer,,,,,,viscosity modifier,"homopolymer of acrylic acid crosslinked with an allyl ether of pentaerythritol, allyl ether of sucrose, allyl ether of propylene",False,True
-xanthan gum,,,"Xanthan gum, Xanthan Gum",,,"viscosity modifier, emulsion stabilizer",,False,True
-sodium alginate,,,"Algin, ammonium alginate, potassium alginate, sodium alginate",,,"emulsion stabilizer, film forming agent","ammonium alginate, potassium alginate, sodium alginate",False,True
-Vitreoscilla Ferment,,,Vitreoscilla Ferment,,,skin conditioning agent,,True,False
-Crosslinked Acrylic Acid Homopolymer,,,"Polyacrylic Acid, Carbomer",,,"emulsifier, viscosity modifier","allyl ether of pentaerythritol, allyl ether of sucrose, allyl ether of propylene",False,True
-Sodium Alginate,,,"Sodium Alginate, Ammonium Alginate, Potassium Alginate",,,Emulsion Stabilizer,"Potassium Alginate, Sodium Alginate, Ammonium Alginate",False,True
+mineral salt,,,,,,viscosity modifier,"lithium chloride, magnesium sulfate",False,True
+Lithium Chloride,,,Lithium Chloride,,,Mineral Salt,,False,True
+vitreoscilla ferment,,,Vitreoscilla Ferment,,,skin conditioning agent,,True,False
+acrylic acid homopolymer crosslinked with an allyl ether of pentaerythritol,,,Crosslinked Acrylic Acid Homopolymer,,,viscosity modifier,"allyl ether of sucrose, allyl ether of propylene",False,True
+Xanthan Gum,,,Xanthan Gum,,,"viscosity modifier, emulsion stabilizer",,False,True
+Sodium Alginate,,,"Sodium Alginate, Ammonium Alginate, Potassium Alginate, Alginic Acid",,,"Viscosity Modifier, Emulsion Stabilizer","Sodium Alginate, Potassium Alginate, Alginic Acid, Ammonium Alginate",False,True
+water insoluble active ingredient,,,"vitreoscilla ferment, silica, boron nitride",,,active ingredient,"vitreoscilla ferment, silica, boron nitride",True,False
+crosslinked acrylic acid homopolymer,,,"Acrylic Acid Homopolymer, Carbomer",,,"emulsion stabilizer, viscosity modifier","an allyl ether of propylene, an allyl ether of sucrose, homopolymer of acrylic acid crosslinked with an allyl ether of pentaerythritol",False,True
+Alginic Acid and Alginates,,,"Alginic Acid, Sodium Alginate, Ammonium Alginate, Potassium Alginate",,,Emulsion Stabilizer,,False,True
+Calcium Chloride,,,Calcium Chloride,,,Mineral Salt,"calcium hydrogen carbonate, calcium sulfate, lithium sulfate, sodium carbonate, potassium carbonate, sodium chloride, potassium nitrate, calcium chloride, potassium hydrogen carbonate, calcium carbonate, sodium nitrate, calcium nitrate, sodium hydrogen carbonate, potassium sulfate, lithium hydrogen carbonate, sodium sulfate, lithium carbonate, lithium chloride, magnesium chloride, potassium chloride, lithium nitrate, magnesium sulfate",False,True

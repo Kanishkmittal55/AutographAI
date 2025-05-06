@@ -12,6 +12,13 @@ import json
 from driver.neo4j import Neo4jDatabase
 from typing import Callable, List, Dict, Any
 import os
+# ─── near the other imports ──────────────────────────
+from components.embeddings import SimpleEmbedder          # ← your helper class
+from threading import Lock
+
+
+
+
 openai_key = os.getenv("OPENAI_API_KEY")
 if not openai_key:
     raise RuntimeError("Missing OPENAI_API_KEY in environment")
@@ -855,37 +862,76 @@ from typing import Union
 
 def refined_df_to_graph_html(
     df: pd.DataFrame,
-    html_name: str = "Refined-Graph.html"
+    patent_number: str,
+    html_name: str = "Refined-Graph.html",
 ) -> Path:
     """
-    Build a very simple ‘representative‑member  ➜  entry’ graph and save it
-    as an interactive PyVis HTML.  Returns the **absolute Path** to the file.
+    Build a graph in which **one central `patent_number` node** has
+    `CONTAINS` edges to every representative_member.  Each representative
+    keeps its `has_entry` edges to split entries.
     """
-
     rows = []
+
+    # central patent node <= no properties except type/name
+    patent_node_json = json.dumps({"name": patent_number, "type": "patent"}, ensure_ascii=False)
+
     for _, row in df.iterrows():
-        rep  = str(row.get("representative_member", "")).strip()
-        raw  = row.get("split_entries", "")
-        # split_entries may be a list or a comma‑separated string
-        if isinstance(raw, str):
-            entries = [x.strip() for x in re.split(r",|;|/|\n", raw) if x.strip()]
-        else:                          # already a list‑like
-            entries = [str(x).strip() for x in raw if str(x).strip()]
+        rep = str(row.get("representative_member", "")).strip()
+        if not rep:
+            continue
+
+        # edge: patent --contains--> representative
+        rows.append(
+            {
+                "node_1": patent_node_json,
+                "node_2": json.dumps({"name": rep, "type": "representative"}, ensure_ascii=False),
+                "edge": "contains",
+            }
+        )
+
+        # handle split entries
+        raw = row.get("split_entries", "")
+        entries = (
+            [x.strip() for x in re.split(r",|;|/|\\n", raw) if x.strip()]
+            if isinstance(raw, str)
+            else [str(x).strip() for x in raw if str(x).strip()]
+        )
 
         for ent in entries:
-            rows.append({
-                "node_1": json.dumps({"name": rep, "type": "representative"},   ensure_ascii=False),
-                "node_2": json.dumps({"name": ent, "type": "entry"},           ensure_ascii=False),
-                "edge"  : "has_entry"
-            })
+            rows.append(
+                {
+                    "node_1": json.dumps({"name": rep, "type": "representative"}, ensure_ascii=False),
+                    "node_2": json.dumps({"name": ent, "type": "entry"}, ensure_ascii=False),
+                    "edge": "has_entry",
+                }
+            )
 
     dfg = pd.DataFrame(rows, columns=["node_1", "node_2", "edge"])
-    G   = build_knowledge_graph(dfg)
+    G = build_knowledge_graph(dfg)
 
     dst = Path(html_name).resolve()
     create_pyvis_graph(G, dst.as_posix())
     return dst
 
+def parse_entries(x):
+    if isinstance(x, list):
+        return x
+    if not isinstance(x, str):
+        return []
+    x = x.strip()
+    # 1) if it looks like JSON, try json.loads
+    if x.startswith("[") and x.endswith("]"):
+        try:
+            return json.loads(x)
+        except json.JSONDecodeError:
+            pass
+    # 2) otherwise, split on commas
+    #    or just wrap single string in a list
+    return [item.strip() for item in x.split(",") if item.strip()]
+
+# ─── right after you define neo4j_connection etc. ────
+EMBED_LOCK = Lock()                # cheap concurrency guard
+Embedder   = SimpleEmbedder()      # starts with **no records**
 
 def autograph_ai_pipeline(
     chunks: List[str],
@@ -980,8 +1026,40 @@ def autograph_ai_pipeline(
     emit("2nd Refinement Cycle to build the refined KG", 80)
     final_df = refine_deduplicated_dataframe(full_df, CHUNK_DATA, False)
 
+    
+    csv_name     = "refined_df_latest.csv"
+    csv_abs_path  = BASE_DIR / csv_name 
+    csv_url = f"/static/src/{csv_name}"
+    final_df.to_csv(csv_abs_path, index=False)
+
+    emit("Refined CSV ready",               # let the frontend know
+     83,
+     file_url=csv_url)
+
+    # --------------------------------------------------
+    #  (RE)BUILD the semantic‑search index from that CSV
+    # --------------------------------------------------
+    with EMBED_LOCK:
+        df_embed = pd.read_csv(csv_abs_path)
+        # you can customise what constitutes “text”
+        rows = []
+        for _, r in df_embed.iterrows():
+            entries = parse_entries(r["split_entries"])
+            text = f"{r['representative_member']} " + " ".join(entries)
+            rows.append({
+                "text":   text,
+                "labels": ["refined"],
+                "name":   r["representative_member"][:60],
+            })
+
+        Embedder.records.clear()
+        Embedder.emb = None
+        Embedder.add_records(rows)
+        print(f"[semantic] re-indexed {len(rows)} refined rows")
+
+
     # ▲▲▲  NEW – build & expose the refined graph  ▲▲▲
-    html_refined = refined_df_to_graph_html(final_df, "Refined-Graph.html")
+    html_refined = refined_df_to_graph_html(final_df, "DummyPatent", "Refined-Graph.html")
     emit("Refined KG ready",                 # SSE for the frontend
          82,
          file_url=f"/static/src/{html_refined.name}")
@@ -1060,7 +1138,7 @@ import json
 # Helpers
 
 import uuid
-import pandas as pd
+
 import tiktoken  # <-- NEW: we use this library for more accurate token counting
 import numpy as np
 import psutil
@@ -3780,3 +3858,5 @@ def run_analysis_for_multiple_csvs(
 ###############################################################
 # The End of the Pipeline code
 ###############################################################
+
+
