@@ -1,0 +1,14 @@
+NAME,PLACEHOLDER,ROLE_OF_PLACEHOLDER,STANDARD_NAMES,SOURCE_SUPPLIER,SUPPLYING_COMPANY,FUNCTIONAL_ROLES,MENTIONED_EXAMPLES,IS_ACTIVE_INGREDIENT,IS_STRUCTURAL_COMPONENT
+Water Insoluble Active Ingredient,"vitreoscilla ferment, silica, boron nitride",Active ingredient in hydrous gel,,,,Skin conditioning agent,"vitreoscilla ferment, silica, boron nitride",True,False
+"acrylic acid homopolymer crosslinked with an allyl ether of pentaerythritol, crosslinked acrylic acid homopolymer",,,"Carbomer, Polyacrylic acid",,,"emulsion stabilizer, film forming agent","allyl ether of pentaerythritol, allyl ether of propylene, allyl ether of sucrose, homopolymer of acrylic acid crosslinked with an allyl ether of pentaerythritol",False,True
+Xanthan Gum,,,Xanthan Gum,,,Emulsion Stabilizer,,False,True
+"Alginate, Sodium Alginate, Sodium alginate",,,"Algin, Alginic acid, Ammonium alginate, Potassium alginate, Sodium alginate",,,"Emulsion Stabilizer, Emulsion stabilizer","Alginic acid, Ammonium alginate, Potassium alginate, Sodium alginate",False,True
+sodium chloride,,,sodium chloride,,,emulsion stabilizer,"calcium chloride, lithium chloride, magnesium chloride, sodium chloride, potassium chloride",False,True
+mineral salt,,,"Lithium Chloride, Magnesium Nitrate",,,Mineral Salt,,False,True
+Lithium Sulfate,,,Lithium Sulfate,,,Mineral Salt,,False,True
+Lithium Nitrate,,,Lithium Nitrate,,,Mineral Salt,,False,True
+"Lithium Carbonate, Lithium Hydrogen Carbonate",,,"Lithium Carbonate, Lithium Hydrogen Carbonate",,,Mineral Salt,,False,True
+Magnesium Chloride,,,Magnesium Chloride,,,Mineral salt,,False,True
+Magnesium Sulfate,,,Magnesium Sulfate,,,Mineral Salt,,False,True
+"Magnesium Carbonate, Magnesium Hydrogen Carbonate",,,"Magnesium Carbonate, Magnesium Hydrogen Carbonate",,,Mineral Salt,,False,True
+vitreoscilla ferment,,,Vitreoscilla Ferment,,,Active ingredient,,True,False
