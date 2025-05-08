@@ -1,0 +1,510 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script>function neighbourhoodHighlight(params) {
+  // console.log("in nieghbourhoodhighlight");
+  allNodes = nodes.get({ returnType: "Object" });
+  // originalNodes = JSON.parse(JSON.stringify(allNodes));
+  // if something is selected:
+  if (params.nodes.length > 0) {
+    highlightActive = true;
+    var i, j;
+    var selectedNode = params.nodes[0];
+    var degrees = 2;
+
+    // mark all nodes as hard to read.
+    for (let nodeId in allNodes) {
+      // nodeColors[nodeId] = allNodes[nodeId].color;
+      allNodes[nodeId].color = "rgba(200,200,200,0.5)";
+      if (allNodes[nodeId].hiddenLabel === undefined) {
+        allNodes[nodeId].hiddenLabel = allNodes[nodeId].label;
+        allNodes[nodeId].label = undefined;
+      }
+    }
+    var connectedNodes = network.getConnectedNodes(selectedNode);
+    var allConnectedNodes = [];
+
+    // get the second degree nodes
+    for (i = 1; i < degrees; i++) {
+      for (j = 0; j < connectedNodes.length; j++) {
+        allConnectedNodes = allConnectedNodes.concat(
+          network.getConnectedNodes(connectedNodes[j])
+        );
+      }
+    }
+
+    // all second degree nodes get a different color and their label back
+    for (i = 0; i < allConnectedNodes.length; i++) {
+      // allNodes[allConnectedNodes[i]].color = "pink";
+      allNodes[allConnectedNodes[i]].color = "rgba(150,150,150,0.75)";
+      if (allNodes[allConnectedNodes[i]].hiddenLabel !== undefined) {
+        allNodes[allConnectedNodes[i]].label =
+          allNodes[allConnectedNodes[i]].hiddenLabel;
+        allNodes[allConnectedNodes[i]].hiddenLabel = undefined;
+      }
+    }
+
+    // all first degree nodes get their own color and their label back
+    for (i = 0; i < connectedNodes.length; i++) {
+      // allNodes[connectedNodes[i]].color = undefined;
+      allNodes[connectedNodes[i]].color = nodeColors[connectedNodes[i]];
+      if (allNodes[connectedNodes[i]].hiddenLabel !== undefined) {
+        allNodes[connectedNodes[i]].label =
+          allNodes[connectedNodes[i]].hiddenLabel;
+        allNodes[connectedNodes[i]].hiddenLabel = undefined;
+      }
+    }
+
+    // the main node gets its own color and its label back.
+    // allNodes[selectedNode].color = undefined;
+    allNodes[selectedNode].color = nodeColors[selectedNode];
+    if (allNodes[selectedNode].hiddenLabel !== undefined) {
+      allNodes[selectedNode].label = allNodes[selectedNode].hiddenLabel;
+      allNodes[selectedNode].hiddenLabel = undefined;
+    }
+  } else if (highlightActive === true) {
+    // console.log("highlightActive was true");
+    // reset all nodes
+    for (let nodeId in allNodes) {
+      // allNodes[nodeId].color = "purple";
+      allNodes[nodeId].color = nodeColors[nodeId];
+      // delete allNodes[nodeId].color;
+      if (allNodes[nodeId].hiddenLabel !== undefined) {
+        allNodes[nodeId].label = allNodes[nodeId].hiddenLabel;
+        allNodes[nodeId].hiddenLabel = undefined;
+      }
+    }
+    highlightActive = false;
+  }
+
+  // transform the object into an array
+  var updateArray = [];
+  if (params.nodes.length > 0) {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        // console.log(allNodes[nodeId]);
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  } else {
+    // console.log("Nothing was selected");
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        // console.log(allNodes[nodeId]);
+        // allNodes[nodeId].color = {};
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  }
+}
+
+function filterHighlight(params) {
+  allNodes = nodes.get({ returnType: "Object" });
+  // if something is selected:
+  if (params.nodes.length > 0) {
+    filterActive = true;
+    let selectedNodes = params.nodes;
+
+    // hiding all nodes and saving the label
+    for (let nodeId in allNodes) {
+      allNodes[nodeId].hidden = true;
+      if (allNodes[nodeId].savedLabel === undefined) {
+        allNodes[nodeId].savedLabel = allNodes[nodeId].label;
+        allNodes[nodeId].label = undefined;
+      }
+    }
+
+    for (let i=0; i < selectedNodes.length; i++) {
+      allNodes[selectedNodes[i]].hidden = false;
+      if (allNodes[selectedNodes[i]].savedLabel !== undefined) {
+        allNodes[selectedNodes[i]].label = allNodes[selectedNodes[i]].savedLabel;
+        allNodes[selectedNodes[i]].savedLabel = undefined;
+      }
+    }
+
+  } else if (filterActive === true) {
+    // reset all nodes
+    for (let nodeId in allNodes) {
+      allNodes[nodeId].hidden = false;
+      if (allNodes[nodeId].savedLabel !== undefined) {
+        allNodes[nodeId].label = allNodes[nodeId].savedLabel;
+        allNodes[nodeId].savedLabel = undefined;
+      }
+    }
+    filterActive = false;
+  }
+
+  // transform the object into an array
+  var updateArray = [];
+  if (params.nodes.length > 0) {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  } else {
+    for (let nodeId in allNodes) {
+      if (allNodes.hasOwnProperty(nodeId)) {
+        updateArray.push(allNodes[nodeId]);
+      }
+    }
+    nodes.update(updateArray);
+  }
+}
+
+function selectNode(nodes) {
+  network.selectNodes(nodes);
+  neighbourhoodHighlight({ nodes: nodes });
+  return nodes;
+}
+
+function selectNodes(nodes) {
+  network.selectNodes(nodes);
+  filterHighlight({nodes: nodes});
+  return nodes;
+}
+
+function highlightFilter(filter) {
+  let selectedNodes = []
+  let selectedProp = filter['property']
+  if (filter['item'] === 'node') {
+    let allNodes = nodes.get({ returnType: "Object" });
+    for (let nodeId in allNodes) {
+      if (allNodes[nodeId][selectedProp] && filter['value'].includes((allNodes[nodeId][selectedProp]).toString())) {
+        selectedNodes.push(nodeId)
+      }
+    }
+  }
+  else if (filter['item'] === 'edge'){
+    let allEdges = edges.get({returnType: 'object'});
+    // check if the selected property exists for selected edge and select the nodes connected to the edge
+    for (let edge in allEdges) {
+      if (allEdges[edge][selectedProp] && filter['value'].includes((allEdges[edge][selectedProp]).toString())) {
+        selectedNodes.push(allEdges[edge]['from'])
+        selectedNodes.push(allEdges[edge]['to'])
+      }
+    }
+  }
+  selectNodes(selectedNodes)
+}</script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+            
+            
+            
+            
+            
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tom-select/2.0.0-rc.4/css/tom-select.min.css" integrity="sha512-43fHB3GLgZfz8QXl1RPQ8O66oIgv3po9cJ5erMt1c4QISq9dYb195T3vr5ImnJPXuVroKcGBPXBFKETW8jrPNQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/tom-select/2.0.0-rc.4/js/tom-select.complete.js" integrity="sha512-jeF9CfnvzDiw9G9xiksVjxR2lib44Gnovvkv+3CgCG6NXCD4gqlA5nDAVW5WjpA+i+/zKsUWV5xNEbW1X/HH0Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 700px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+                <div id="select-menu" class="card-header">
+                    <div class="row no-gutters">
+                        <div class="col-10 pb-2">
+                            <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            onchange="selectNode([value]);"
+                            id="select-node"
+                            placeholder="Select node..."
+                            >
+                                <option selected>Select a Node by ID</option>
+                                
+                                    <option value="DummyPatent">DummyPatent</option>
+                                
+                                    <option value="keratin materials">keratin materials</option>
+                                
+                                    <option value="Aqua">Aqua</option>
+                                
+                                    <option value="Xanthan Gum">Xanthan Gum</option>
+                                
+                                    <option value="Alginate Derivatives">Alginate Derivatives</option>
+                                
+                                    <option value="Carbomer">Carbomer</option>
+                                
+                                    <option value="Acrylates/Alkyl Acrylate Crosspolymer">Acrylates/Alkyl Acrylate Crosspolymer</option>
+                                
+                                    <option value="Acrypol® 980">Acrypol® 980</option>
+                                
+                                    <option value="Alginic Acid">Alginic Acid</option>
+                                
+                                    <option value="Vitreoscilla Ferment">Vitreoscilla Ferment</option>
+                                
+                                    <option value="boron nitride">boron nitride</option>
+                                
+                                    <option value="silica">silica</option>
+                                
+                                    <option value="Alginates">Alginates</option>
+                                
+                                    <option value="water insoluble active ingredient">water insoluble active ingredient</option>
+                                
+                                    <option value="Calcium Chloride">Calcium Chloride</option>
+                                
+                                    <option value="Synthalen">Synthalen</option>
+                                
+                                    <option value="Sodium Chloride">Sodium Chloride</option>
+                                
+                                    <option value="calcium salts">calcium salts</option>
+                                
+                                    <option value="sodium salts">sodium salts</option>
+                                
+                                    <option value="potassium salts">potassium salts</option>
+                                
+                                    <option value="lithium salts">lithium salts</option>
+                                
+                                    <option value="magnesium salts">magnesium salts</option>
+                                
+                                    <option value="fragrance">fragrance</option>
+                                
+                                    <option value="Citric Acid">Citric Acid</option>
+                                
+                                    <option value="Boron Nitride">Boron Nitride</option>
+                                
+                                    <option value="Chlorphenesin">Chlorphenesin</option>
+                                
+                                    <option value="Propanediol">Propanediol</option>
+                                
+                                    <option value="Ammonium Alginate">Ammonium Alginate</option>
+                                
+                                    <option value="Potassium Alginate">Potassium Alginate</option>
+                                
+                                    <option value="Sodium Alginate">Sodium Alginate</option>
+                                
+                                    <option value="Humectants">Humectants</option>
+                                
+                                    <option value="Hydroxyacetophenone">Hydroxyacetophenone</option>
+                                
+                                    <option value="Acetamide MEA">Acetamide MEA</option>
+                                
+                                    <option value="Butylene Glycol">Butylene Glycol</option>
+                                
+                                    <option value="Methyl Gluceth">Methyl Gluceth</option>
+                                
+                                    <option value="keratin">keratin</option>
+                                
+                                    <option value="Humectant">Humectant</option>
+                                
+                                    <option value="Pentylene Glycol">Pentylene Glycol</option>
+                                
+                                    <option value="Sodium Hyaluronate">Sodium Hyaluronate</option>
+                                
+                                    <option value="Sodium Citrate">Sodium Citrate</option>
+                                
+                                    <option value="PEG/PPG/Polybutylene Glycol-8/5/3 Glycerin">PEG/PPG/Polybutylene Glycol-8/5/3 Glycerin</option>
+                                
+                                    <option value="Water Premix">Water Premix</option>
+                                
+                                    <option value="Hyaluronic Acid Derivatives">Hyaluronic Acid Derivatives</option>
+                                
+                                    <option value="Metal Salts">Metal Salts</option>
+                                
+                                    <option value="Mineral Salts">Mineral Salts</option>
+                                
+                                    <option value="water">water</option>
+                                
+                                    <option value="Keltrol® CG-T">Keltrol® CG-T</option>
+                                
+                                    <option value="potassium alginate">potassium alginate</option>
+                                
+                                    <option value="Alginic Acid and Alginates">Alginic Acid and Alginates</option>
+                                
+                                    <option value="Crosslinked Acrylic Acid Homopolymer">Crosslinked Acrylic Acid Homopolymer</option>
+                                
+                                    <option value="Carbomer Acrypol® 980">Carbomer Acrypol® 980</option>
+                                
+                                    <option value="Acrylates">Acrylates</option>
+                                
+                                    <option value="Alkyl Acrylate Crosspolymer">Alkyl Acrylate Crosspolymer</option>
+                                
+                                    <option value="Algin">Algin</option>
+                                
+                                    <option value="Protanal PH 6160">Protanal PH 6160</option>
+                                
+                                    <option value="vitreoscilla ferment">vitreoscilla ferment</option>
+                                
+                                    <option value="calcium chloride">calcium chloride</option>
+                                
+                                    <option value="crosslinked acrylic acid homopolymer">crosslinked acrylic acid homopolymer</option>
+                                
+                                    <option value="mineral salt">mineral salt</option>
+                                
+                                    <option value="Citric Acid Monohydrate">Citric Acid Monohydrate</option>
+                                
+                                    <option value="Citric Acid Monohydrate Granular">Citric Acid Monohydrate Granular</option>
+                                
+                                    <option value="Hydroxyethyl Urea">Hydroxyethyl Urea</option>
+                                
+                                    <option value="Methyl Gluceth-20">Methyl Gluceth-20</option>
+                                
+                                    <option value="Propylene Glycol">Propylene Glycol</option>
+                                
+                                    <option value="Cristalhyal LO">Cristalhyal LO</option>
+                                
+                                    <option value="Trisodium Citrate Dihydrate">Trisodium Citrate Dihydrate</option>
+                                
+                                    <option value="PEG">PEG</option>
+                                
+                                    <option value="PPG">PPG</option>
+                                
+                                    <option value="Polybutylene Glycol-8">Polybutylene Glycol-8</option>
+                                
+                                    <option value="5">5</option>
+                                
+                                    <option value="3 Glycerin">3 Glycerin</option>
+                                
+                                    <option value="polybutylene glycol-8">polybutylene glycol-8</option>
+                                
+                                    <option value="3 glycerin">3 glycerin</option>
+                                
+                                    <option value="Metal Chlorides">Metal Chlorides</option>
+                                
+                                    <option value="Metal Sulfates">Metal Sulfates</option>
+                                
+                                    <option value="Metal Nitrates">Metal Nitrates</option>
+                                
+                                    <option value="Metal Carbonates">Metal Carbonates</option>
+                                
+                                    <option value="Mineral Salts Sel de Vichy">Mineral Salts Sel de Vichy</option>
+                                
+                            </select>
+                        </div>
+                        <div class="col-2 pb-2">
+                            <button type="button" class="btn btn-primary btn-block" onclick="neighbourhoodHighlight({nodes: []});">Reset Selection</button>
+                        </div>
+                    </div>
+                </div>
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+                  new TomSelect("#select-node",{
+                      create: false,
+                      sortField: {
+                          field: "text",
+                          direction: "asc"
+                      }
+                  });
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "DummyPatent", "label": "DummyPatent", "name": "DummyPatent", "shape": "circle", "size": 60, "type": "patent"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "keratin materials", "label": "keratin\nmaterials", "name": "keratin materials", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Aqua", "label": "Aqua", "name": "Aqua", "shape": "circle", "size": 60, "type": "representative"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Xanthan Gum", "label": "Xanthan\nGum", "name": "Xanthan Gum", "shape": "circle", "size": 60, "type": "representative"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Alginate Derivatives", "label": "Alginate\nDerivatives", "name": "Alginate Derivatives", "shape": "circle", "size": 60, "type": "representative"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Carbomer", "label": "Carbomer", "name": "Carbomer", "shape": "circle", "size": 60, "type": "representative"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Acrylates/Alkyl Acrylate Crosspolymer", "label": "Acrylates/Alkyl\nAcrylate\nCrosspolymer", "name": "Acrylates/Alkyl Acrylate Crosspolymer", "shape": "circle", "size": 60, "type": "representative"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Acrypol\u00ae 980", "label": "Acrypol\u00ae\n980", "name": "Acrypol\u00ae 980", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Alginic Acid", "label": "Alginic\nAcid", "name": "Alginic Acid", "shape": "circle", "size": 60, "type": "representative"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Vitreoscilla Ferment", "label": "Vitreoscilla\nFerment", "name": "Vitreoscilla Ferment", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "boron nitride", "label": "boron\nnitride", "name": "boron nitride", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "silica", "label": "silica", "name": "silica", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Alginates", "label": "Alginates", "name": "Alginates", "shape": "circle", "size": 60, "type": "representative"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "water insoluble active ingredient", "label": "water\ninsoluble\nactive\ningredient", "name": "water insoluble active ingredient", "shape": "circle", "size": 60, "type": "representative"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Calcium Chloride", "label": "Calcium\nChloride", "name": "Calcium Chloride", "shape": "circle", "size": 60, "type": "representative"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Synthalen", "label": "Synthalen", "name": "Synthalen", "shape": "circle", "size": 60, "type": "representative"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Sodium Chloride", "label": "Sodium\nChloride", "name": "Sodium Chloride", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "calcium salts", "label": "calcium\nsalts", "name": "calcium salts", "shape": "circle", "size": 60, "type": "representative"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "sodium salts", "label": "sodium\nsalts", "name": "sodium salts", "shape": "circle", "size": 60, "type": "representative"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "potassium salts", "label": "potassium\nsalts", "name": "potassium salts", "shape": "circle", "size": 60, "type": "representative"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "lithium salts", "label": "lithium\nsalts", "name": "lithium salts", "shape": "circle", "size": 60, "type": "representative"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "magnesium salts", "label": "magnesium\nsalts", "name": "magnesium salts", "shape": "circle", "size": 60, "type": "representative"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "fragrance", "label": "fragrance", "name": "fragrance", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Citric Acid", "label": "Citric\nAcid", "name": "Citric Acid", "shape": "circle", "size": 60, "type": "representative"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Boron Nitride", "label": "Boron\nNitride", "name": "Boron Nitride", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Chlorphenesin", "label": "Chlorphenesin", "name": "Chlorphenesin", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Propanediol", "label": "Propanediol", "name": "Propanediol", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Ammonium Alginate", "label": "Ammonium\nAlginate", "name": "Ammonium Alginate", "shape": "circle", "size": 60, "type": "representative"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Potassium Alginate", "label": "Potassium\nAlginate", "name": "Potassium Alginate", "shape": "circle", "size": 60, "type": "representative"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Sodium Alginate", "label": "Sodium\nAlginate", "name": "Sodium Alginate", "shape": "circle", "size": 60, "type": "representative"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Humectants", "label": "Humectants", "name": "Humectants", "shape": "circle", "size": 60, "type": "representative"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Hydroxyacetophenone", "label": "Hydroxyacetophenone", "name": "Hydroxyacetophenone", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Acetamide MEA", "label": "Acetamide\nMEA", "name": "Acetamide MEA", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Butylene Glycol", "label": "Butylene\nGlycol", "name": "Butylene Glycol", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Methyl Gluceth", "label": "Methyl\nGluceth", "name": "Methyl Gluceth", "shape": "circle", "size": 60, "type": "representative"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "keratin", "label": "keratin", "name": "keratin", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Humectant", "label": "Humectant", "name": "Humectant", "shape": "circle", "size": 60, "type": "representative"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Pentylene Glycol", "label": "Pentylene\nGlycol", "name": "Pentylene Glycol", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Sodium Hyaluronate", "label": "Sodium\nHyaluronate", "name": "Sodium Hyaluronate", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Sodium Citrate", "label": "Sodium\nCitrate", "name": "Sodium Citrate", "shape": "circle", "size": 60, "type": "representative"}, {"borderWidth": 2, "color": {"background": "#57d3db", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "PEG/PPG/Polybutylene Glycol-8/5/3 Glycerin", "label": "PEG/PPG/Polybutylene\nGlycol-8/5/3\nGlycerin", "name": "PEG/PPG/Polybutylene Glycol-8/5/3 Glycerin", "shape": "circle", "size": 60, "type": "representative"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Water Premix", "label": "Water\nPremix", "name": "Water Premix", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Hyaluronic Acid Derivatives", "label": "Hyaluronic\nAcid\nDerivatives", "name": "Hyaluronic Acid Derivatives", "shape": "circle", "size": 60, "type": "representative"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Metal Salts", "label": "Metal\nSalts", "name": "Metal Salts", "shape": "circle", "size": 60, "type": "representative"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Mineral Salts", "label": "Mineral\nSalts", "name": "Mineral Salts", "shape": "circle", "size": 60, "type": "representative"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "water", "label": "water", "name": "water", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Keltrol\u00ae CG-T", "label": "Keltrol\u00ae\nCG-T", "name": "Keltrol\u00ae CG-T", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "potassium alginate", "label": "potassium\nalginate", "name": "potassium alginate", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Alginic Acid and Alginates", "label": "Alginic\nAcid\nand\nAlginates", "name": "Alginic Acid and Alginates", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Crosslinked Acrylic Acid Homopolymer", "label": "Crosslinked\nAcrylic\nAcid\nHomopolymer", "name": "Crosslinked Acrylic Acid Homopolymer", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Carbomer Acrypol\u00ae 980", "label": "Carbomer\nAcrypol\u00ae\n980", "name": "Carbomer Acrypol\u00ae 980", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Acrylates", "label": "Acrylates", "name": "Acrylates", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Alkyl Acrylate Crosspolymer", "label": "Alkyl\nAcrylate\nCrosspolymer", "name": "Alkyl Acrylate Crosspolymer", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Algin", "label": "Algin", "name": "Algin", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Protanal PH 6160", "label": "Protanal\nPH\n6160", "name": "Protanal PH 6160", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "vitreoscilla ferment", "label": "vitreoscilla\nferment", "name": "vitreoscilla ferment", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "calcium chloride", "label": "calcium\nchloride", "name": "calcium chloride", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "crosslinked acrylic acid homopolymer", "label": "crosslinked\nacrylic\nacid\nhomopolymer", "name": "crosslinked acrylic acid homopolymer", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "mineral salt", "label": "mineral\nsalt", "name": "mineral salt", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Citric Acid Monohydrate", "label": "Citric\nAcid\nMonohydrate", "name": "Citric Acid Monohydrate", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Citric Acid Monohydrate Granular", "label": "Citric\nAcid\nMonohydrate\nGranular", "name": "Citric Acid Monohydrate Granular", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Hydroxyethyl Urea", "label": "Hydroxyethyl\nUrea", "name": "Hydroxyethyl Urea", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Methyl Gluceth-20", "label": "Methyl\nGluceth-20", "name": "Methyl Gluceth-20", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Propylene Glycol", "label": "Propylene\nGlycol", "name": "Propylene Glycol", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Cristalhyal LO", "label": "Cristalhyal\nLO", "name": "Cristalhyal LO", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Trisodium Citrate Dihydrate", "label": "Trisodium\nCitrate\nDihydrate", "name": "Trisodium Citrate Dihydrate", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#57d3db", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "PEG", "label": "PEG", "name": "PEG", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#57d3db", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "PPG", "label": "PPG", "name": "PPG", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#57d3db", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Polybutylene Glycol-8", "label": "Polybutylene\nGlycol-8", "name": "Polybutylene Glycol-8", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#57d3db", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "5", "label": "5", "name": "5", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#57d3db", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "3 Glycerin", "label": "3\nGlycerin", "name": "3 Glycerin", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#57d3db", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "polybutylene glycol-8", "label": "polybutylene\nglycol-8", "name": "polybutylene glycol-8", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#57d3db", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "3 glycerin", "label": "3\nglycerin", "name": "3 glycerin", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Metal Chlorides", "label": "Metal\nChlorides", "name": "Metal Chlorides", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Metal Sulfates", "label": "Metal\nSulfates", "name": "Metal Sulfates", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Metal Nitrates", "label": "Metal\nNitrates", "name": "Metal Nitrates", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Metal Carbonates", "label": "Metal\nCarbonates", "name": "Metal Carbonates", "shape": "circle", "size": 60, "type": "entry"}, {"borderWidth": 2, "color": {"background": "#db5f57", "border": "#2471A3", "highlight": {"background": "#F7DC6F", "border": "#B7950B"}}, "font": {"color": "#000000", "face": "arial", "multi": true, "size": 30}, "id": "Mineral Salts Sel de Vichy", "label": "Mineral\nSalts\nSel\nde\nVichy", "name": "Mineral Salts Sel de Vichy", "shape": "circle", "size": 60, "type": "entry"}]);
+                  edges = new vis.DataSet([{"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "keratin materials", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "Aqua", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "Xanthan Gum", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "Alginate Derivatives", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "Carbomer", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "Acrylates/Alkyl Acrylate Crosspolymer", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "Acrypol\u00ae 980", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "Alginic Acid", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "Vitreoscilla Ferment", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "boron nitride", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "silica", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "Alginates", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "water insoluble active ingredient", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "Calcium Chloride", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "Synthalen", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "Sodium Chloride", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "calcium salts", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "sodium salts", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "potassium salts", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "lithium salts", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "magnesium salts", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "fragrance", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "Citric Acid", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "Boron Nitride", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "Chlorphenesin", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "Propanediol", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "Ammonium Alginate", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "Potassium Alginate", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "Sodium Alginate", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "Humectants", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "Hydroxyacetophenone", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "Acetamide MEA", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "Butylene Glycol", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "Methyl Gluceth", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "keratin", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "Humectant", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "Pentylene Glycol", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "Sodium Hyaluronate", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "Sodium Citrate", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "PEG/PPG/Polybutylene Glycol-8/5/3 Glycerin", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "Water Premix", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "Hyaluronic Acid Derivatives", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "Metal Salts", "width": 2}, {"color": "#848484", "count": null, "from": "DummyPatent", "label": "contains", "to": "Mineral Salts", "width": 2}, {"color": "#848484", "count": null, "from": "keratin materials", "label": "has_entry", "to": "keratin materials", "width": 2}, {"color": "#848484", "count": null, "from": "Aqua", "label": "has_entry", "to": "water", "width": 2}, {"color": "#848484", "count": null, "from": "Xanthan Gum", "label": "has_entry", "to": "Xanthan Gum", "width": 2}, {"color": "#848484", "count": null, "from": "Xanthan Gum", "label": "has_entry", "to": "Keltrol\u00ae CG-T", "width": 2}, {"color": "#848484", "count": null, "from": "Alginate Derivatives", "label": "has_entry", "to": "Ammonium Alginate", "width": 2}, {"color": "#848484", "count": null, "from": "Alginate Derivatives", "label": "has_entry", "to": "potassium alginate", "width": 2}, {"color": "#848484", "count": null, "from": "Ammonium Alginate", "label": "has_entry", "to": "Alginates", "width": 2}, {"color": "#848484", "count": null, "from": "Ammonium Alginate", "label": "has_entry", "to": "Alginic Acid and Alginates", "width": 2}, {"color": "#848484", "count": null, "from": "Carbomer", "label": "has_entry", "to": "Carbomer", "width": 2}, {"color": "#848484", "count": null, "from": "Carbomer", "label": "has_entry", "to": "Crosslinked Acrylic Acid Homopolymer", "width": 2}, {"color": "#848484", "count": null, "from": "Carbomer", "label": "has_entry", "to": "Carbomer Acrypol\u00ae 980", "width": 2}, {"color": "#848484", "count": null, "from": "Acrylates/Alkyl Acrylate Crosspolymer", "label": "has_entry", "to": "Acrylates", "width": 2}, {"color": "#848484", "count": null, "from": "Acrylates/Alkyl Acrylate Crosspolymer", "label": "has_entry", "to": "Alkyl Acrylate Crosspolymer", "width": 2}, {"color": "#848484", "count": null, "from": "Acrypol\u00ae 980", "label": "has_entry", "to": "Acrypol\u00ae 980", "width": 2}, {"color": "#848484", "count": null, "from": "Alginic Acid", "label": "has_entry", "to": "Alginic Acid", "width": 2}, {"color": "#848484", "count": null, "from": "Alginic Acid", "label": "has_entry", "to": "Algin", "width": 2}, {"color": "#848484", "count": null, "from": "Alginic Acid", "label": "has_entry", "to": "Alginic Acid and Alginates", "width": 2}, {"color": "#848484", "count": null, "from": "Vitreoscilla Ferment", "label": "has_entry", "to": "Vitreoscilla Ferment", "width": 2}, {"color": "#848484", "count": null, "from": "boron nitride", "label": "has_entry", "to": "boron nitride", "width": 2}, {"color": "#848484", "count": null, "from": "boron nitride", "label": "has_entry", "to": "water insoluble active ingredient", "width": 2}, {"color": "#848484", "count": null, "from": "silica", "label": "has_entry", "to": "silica", "width": 2}, {"color": "#848484", "count": null, "from": "silica", "label": "has_entry", "to": "water insoluble active ingredient", "width": 2}, {"color": "#848484", "count": null, "from": "Alginates", "label": "has_entry", "to": "Sodium Alginate", "width": 2}, {"color": "#848484", "count": null, "from": "Alginates", "label": "has_entry", "to": "Potassium Alginate", "width": 2}, {"color": "#848484", "count": null, "from": "Alginates", "label": "has_entry", "to": "Alginates", "width": 2}, {"color": "#848484", "count": null, "from": "Alginates", "label": "has_entry", "to": "Protanal PH 6160", "width": 2}, {"color": "#848484", "count": null, "from": "Sodium Alginate", "label": "has_entry", "to": "Alginic Acid and Alginates", "width": 2}, {"color": "#848484", "count": null, "from": "Potassium Alginate", "label": "has_entry", "to": "Alginic Acid and Alginates", "width": 2}, {"color": "#848484", "count": null, "from": "water insoluble active ingredient", "label": "has_entry", "to": "vitreoscilla ferment", "width": 2}, {"color": "#848484", "count": null, "from": "Calcium Chloride", "label": "has_entry", "to": "calcium chloride", "width": 2}, {"color": "#848484", "count": null, "from": "Synthalen", "label": "has_entry", "to": "crosslinked acrylic acid homopolymer", "width": 2}, {"color": "#848484", "count": null, "from": "Sodium Chloride", "label": "has_entry", "to": "Sodium Chloride", "width": 2}, {"color": "#848484", "count": null, "from": "calcium salts", "label": "has_entry", "to": "mineral salt", "width": 2}, {"color": "#848484", "count": null, "from": "mineral salt", "label": "has_entry", "to": "sodium salts", "width": 2}, {"color": "#848484", "count": null, "from": "mineral salt", "label": "has_entry", "to": "potassium salts", "width": 2}, {"color": "#848484", "count": null, "from": "mineral salt", "label": "has_entry", "to": "lithium salts", "width": 2}, {"color": "#848484", "count": null, "from": "mineral salt", "label": "has_entry", "to": "magnesium salts", "width": 2}, {"color": "#848484", "count": null, "from": "fragrance", "label": "has_entry", "to": "fragrance", "width": 2}, {"color": "#848484", "count": null, "from": "Citric Acid", "label": "has_entry", "to": "Citric Acid", "width": 2}, {"color": "#848484", "count": null, "from": "Citric Acid", "label": "has_entry", "to": "Citric Acid Monohydrate", "width": 2}, {"color": "#848484", "count": null, "from": "Citric Acid", "label": "has_entry", "to": "Citric Acid Monohydrate Granular", "width": 2}, {"color": "#848484", "count": null, "from": "Boron Nitride", "label": "has_entry", "to": "Boron Nitride", "width": 2}, {"color": "#848484", "count": null, "from": "Chlorphenesin", "label": "has_entry", "to": "Chlorphenesin", "width": 2}, {"color": "#848484", "count": null, "from": "Propanediol", "label": "has_entry", "to": "Propanediol", "width": 2}, {"color": "#848484", "count": null, "from": "Humectants", "label": "has_entry", "to": "Hydroxyethyl Urea", "width": 2}, {"color": "#848484", "count": null, "from": "Hydroxyacetophenone", "label": "has_entry", "to": "Hydroxyacetophenone", "width": 2}, {"color": "#848484", "count": null, "from": "Acetamide MEA", "label": "has_entry", "to": "Acetamide MEA", "width": 2}, {"color": "#848484", "count": null, "from": "Butylene Glycol", "label": "has_entry", "to": "Butylene Glycol", "width": 2}, {"color": "#848484", "count": null, "from": "Methyl Gluceth", "label": "has_entry", "to": "Methyl Gluceth-20", "width": 2}, {"color": "#848484", "count": null, "from": "keratin", "label": "has_entry", "to": "keratin", "width": 2}, {"color": "#848484", "count": null, "from": "Humectant", "label": "has_entry", "to": "Propylene Glycol", "width": 2}, {"color": "#848484", "count": null, "from": "Pentylene Glycol", "label": "has_entry", "to": "Pentylene Glycol", "width": 2}, {"color": "#848484", "count": null, "from": "Sodium Hyaluronate", "label": "has_entry", "to": "Cristalhyal LO", "width": 2}, {"color": "#848484", "count": null, "from": "Sodium Hyaluronate", "label": "has_entry", "to": "Hyaluronic Acid Derivatives", "width": 2}, {"color": "#848484", "count": null, "from": "Sodium Citrate", "label": "has_entry", "to": "Trisodium Citrate Dihydrate", "width": 2}, {"color": "#848484", "count": null, "from": "PEG/PPG/Polybutylene Glycol-8/5/3 Glycerin", "label": "has_entry", "to": "PEG", "width": 2}, {"color": "#848484", "count": null, "from": "PEG/PPG/Polybutylene Glycol-8/5/3 Glycerin", "label": "has_entry", "to": "PPG", "width": 2}, {"color": "#848484", "count": null, "from": "PEG/PPG/Polybutylene Glycol-8/5/3 Glycerin", "label": "has_entry", "to": "Polybutylene Glycol-8", "width": 2}, {"color": "#848484", "count": null, "from": "PEG/PPG/Polybutylene Glycol-8/5/3 Glycerin", "label": "has_entry", "to": "5", "width": 2}, {"color": "#848484", "count": null, "from": "PEG/PPG/Polybutylene Glycol-8/5/3 Glycerin", "label": "has_entry", "to": "3 Glycerin", "width": 2}, {"color": "#848484", "count": null, "from": "PEG/PPG/Polybutylene Glycol-8/5/3 Glycerin", "label": "has_entry", "to": "polybutylene glycol-8", "width": 2}, {"color": "#848484", "count": null, "from": "PEG/PPG/Polybutylene Glycol-8/5/3 Glycerin", "label": "has_entry", "to": "3 glycerin", "width": 2}, {"color": "#848484", "count": null, "from": "Water Premix", "label": "has_entry", "to": "Water Premix", "width": 2}, {"color": "#848484", "count": null, "from": "Metal Salts", "label": "has_entry", "to": "Metal Chlorides", "width": 2}, {"color": "#848484", "count": null, "from": "Metal Salts", "label": "has_entry", "to": "Metal Sulfates", "width": 2}, {"color": "#848484", "count": null, "from": "Metal Salts", "label": "has_entry", "to": "Metal Nitrates", "width": 2}, {"color": "#848484", "count": null, "from": "Metal Salts", "label": "has_entry", "to": "Metal Carbonates", "width": 2}, {"color": "#848484", "count": null, "from": "Mineral Salts", "label": "has_entry", "to": "Mineral Salts Sel de Vichy", "width": 2}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {"physics": {"barnesHut": {"gravitationalConstant": -50000, "centralGravity": 0.2, "springLength": 200, "springConstant": 0.04, "avoidOverlap": 1}, "minVelocity": 0.75}};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+                    network.on("selectNode", neighbourhoodHighlight);
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

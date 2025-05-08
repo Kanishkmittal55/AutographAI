@@ -65,6 +65,12 @@ function App() {
               📑 Infringement Detection
             </a>
             <a
+              href="use-cases/prompt-creator/index.html"
+              className="neon-button w-full text-center py-2"
+            >
+              📑 Prompt Creator
+            </a>
+            <a
               href="http://localhost:7474"
               target="_blank"
               rel="noopener noreferrer"

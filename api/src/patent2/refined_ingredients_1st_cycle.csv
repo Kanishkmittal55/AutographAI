@@ -1,0 +1,194 @@
+NAME,PLACEHOLDER,ROLE_OF_PLACEHOLDER,STANDARD_NAMES,SOURCE_SUPPLIER,SUPPLYING_COMPANY,FUNCTIONAL_ROLES,MENTIONED_EXAMPLES,IS_ACTIVE_INGREDIENT,IS_STRUCTURAL_COMPONENT
+C-glycoside derivative,"X, R, S",Structural component in glycoside formula,"C-B-D-xylopyranoside-2-hydroxypropane, C-a-D-xylopyranoside-2-hydroxypropane",,,"skin conditioning agent, skin brightening agent, anti-aging agent, collagen booster","D-glucose, D-xylose, N-acetyl-D-glucosamine, 1-(C-β-D-galactopyranosyl)-2-hydroxypropane",True,True
+Type VII Collagen,,,Collagen Type VII,,,"skin conditioning agent, binding agent",,False,True
+Type I Collagen,,,Collagen Type I,,,"skin conditioning agent, binding agent",,False,True
+Type III Collagen,,,Collagen Type III,,,"skin conditioning agent, binding agent",,False,True
+Ascorbic Acid Derivatives,,,"Ascorbic Acid, Vitamin C, Ascorbic Acid Derivatives",,,"collagen booster, anti-aging agent, antioxidant","ascorbyl-2 glucoside, sodium ascorbyl phosphate, ascorbic acid saccharide esters, metal salts of phosphoryl ascorbic acid",True,False
+Procollagen A Chain,,,Procollagen,,,"Skin conditioning agent, Collagen synthesis stimulation","Type I Collagen, Type III Collagen, Type VII Collagen",True,True
+Type VII Collagen,,,"Collagen, Type VII Collagen",,,"structural component, cohesion between epidermal and dermal tissues","type VII collagen, collagen V, collagen III, collagen I",False,True
+Elastin,,,Elastin,,,structural component,,False,True
+Extracellular Matrix Ground Substance,,,Ground Substance,,,structural component,,False,True
+Halogen,"X, R, S",Structural component in chemical formulas,"Chlorine, Fluorine, Bromine, Iodine",,,Structural component,,False,True
+Aryl,aromatic ring,Aromatic structural component,,,,Aromatic structural component,phenyl,False,True
+C-glycoside derivative,"S, R, X",Structural bridge in glycoside derivatives,,,,humectant,"D-glucose, D-xylose, N-acetyl-D-glucosamine, L-fucose",True,True
+C-Cycloalkyl Radical,C;-Cq cycloalkyl radical,Structural component in chemical formula,,,,,,False,True
+C-glycoside derivative,"R, X, S",Structural component in C-glycoside,,,,Structural component,,False,True
+Monosaccharide or Polysaccharide,S,Structural component in glycosides,,,,Structural component,"D-glucose, D-xylose, L-fucose, D-galactose, D-maltose",False,True
+C-glycoside derivative,"S, X, R",Functional bridge in glycoside structure,C-anomeric bond,,,"Anti-aging, Collagen synthesis enhancer","C-β-D-xylopyranoside-n-propan-2-one, C-α-D-xylopyranoside-n-propan-2-one, C-β-D-xylopyranoside-2-hydroxypropane",True,True
+cosmetically acceptable salts,,,,,,"solvates, isomers",,False,True
+C-glycoside derivative and ascorbic acid combination,,,"C-glycoside derivative, ascorbic acid",,,"anti-aging, collagen synthesis, skin elasticity","ascorbic acid saccharide esters, metal salts of phosphoryl ascorbic acid",True,False
+D-iduronic acid,,,D-iduronic acid,,,,,False,True
+N-acetyl-D-glucosamine,,,N-acetyl-D-glucosamine,,,,,False,True
+xylobiose,,,xylobiose,,,oligosaccharide,"methyl-f-xylobioside, xylotriose, xylotetraose, xylopentaose, xylohexaose",False,True
+D-glucose,,,"D-glucose, Glucose",,,Monosaccharide,"D-xylose, N-acetyl-D-glucosamine, L-fucose",False,True
+D-xylose,,,"D-xylose, Xylose",,,"Improves skin elasticity, Enhances collagen synthesis",C-glycoside derivatives,True,True
+C-B-D-xylopyranoside-n-propan-2-one,,,,,,,,True,False
+C-a-D-xylopyranoside-n-propan-2-one,,,C-a-D-xylopyranoside-n-propan-2-one,,,,,True,False
+C-glycoside derivative,C-glycoside derivative,Functional bridge in anti-aging,C-glycoside derivative,,L'OREAL,"Anti-aging, Collagen synthesis booster",D-xylose derivatives,True,False
+C-glycoside derivative,C-glycoside derivative,Functional bridge between actives,,,,"binding agent, anti-aging",D-xylose,True,True
+C-glycoside derivative,C-glycoside,Functional bridge in anti-aging,C-glycoside derivative,,L'OREAL,"anti-aging agent, collagen synthesis booster",ascorbic acid combination,True,False
+"1-(C-p-D-xylopyranoside)hexane-2,6-diol",,,,,,emulsion stabilizer,,False,True
+1-(C-o.-L-fucopyranoside)propan-2-one,,,,,,,,False,True
+C-glycoside derivative,"X, R, S",Structural component in chemical formula,C-glycoside derivative,,L'OREAL,"Anti-aging, Collagen synthesis booster",Combination with ascorbic acid,True,True
+C-glycoside derivative,C-glycoside derivative,Synergistic with ascorbic acid,C-glycoside derivative,,,"Anti-aging, Collagen synthesis booster",Combination with ascorbic acid,True,True
+C-glycoside derivative,C-glycoside derivative,Functional bridge for collagen synthesis,C-glycoside derivative,,L'OREAL,"Anti-aging, Collagen synthesis booster",Combination with ascorbic acid,True,False
+1-(C-o.-L-fucopyranoside)-2-hydroxypropane,,,,,,,,False,True
+C-glycoside derivative,C-glycoside derivative,Functional bridge for collagen synthesis,C-glycoside derivative,,L'OREAL,"Anti-aging, Collagen synthesis booster",Combination with ascorbic acid,True,False
+C-glycoside derivative,"R, S, X",Structural component in glycoside derivatives,C-glycoside,,,"Anti-aging, Moisturizing","C-β-D-xylopyranoside-n-propan-2-one, C-α-D-xylopyranoside-n-propan-2-one",True,True
+C-glycoside derivative,"S, X, R",Structural component in glycoside derivatives,C-glycoside derivative,,,"Anti-aging, Moisturizing","D-glucose, D-xylose, L-fucose, N-acetyl-D-glucosamine",True,True
+C-glycoside derivatives,"S, R, X",Structural component in glycoside derivatives,,,,"Anti-aging, Moisturizing","C-β-D-xylopyranoside-n-propan-2-one, C-α-D-xylopyranoside-n-propan-2-one",True,True
+C-glycoside derivative,C-glycoside,Functional bridge in formulations,,,,"Anti-aging, Collagen synthesis stimulation","ascorbyl-2 glucoside, 6-O-beta-D-galactopyranosyl L-ascorbic acid",True,True
+C-glycoside derivative,,,,,,"Anti-aging, Collagen synthesis stimulation","ascorbyl-2 glucoside, 6-O-f-D-galactopyranosyl L-ascorbic acid",True,False
+"1-(C-B-D-galactopyranosyl)pentane-2,6-diol",,,,,,,,False,True
+6-(C-B-D-fucopyranoside)-5-hydroxyhexanoic acid,,,,,,,,True,False
+6-(C-a-D-fucopyranoside)-5-hydroxyhexanoic,,,,,,,,True,False
+6-(C-p-L-fucopyranoside)-5-hydroxyhexanoic,,,,,,,,True,False
+6-(C-a-L-fucopyranoside)-5-hydroxyhexanoic,,,,,,,,True,False
+C-glycoside derivative,,,,,,"Anti-aging, Collagen synthesis stimulation","ascorbyl-2 glucoside, 2-O-a-D-glucopyranosyl L-ascorbic acid",True,True
+C-glycoside derivative,,,,,,"synergistic agent, collagen synthesis stimulator","ascorbyl-2 glucoside, 2-O-alpha-D-glucopyranosyl L-ascorbic acid",True,True
+C-glycoside derivative,C-glycoside,Structural component in skin formulations,C-glycoside derivative,,L'OREAL,"Anti-aging, Collagen synthesis booster",Combination with ascorbic acid,True,True
+C-glycoside derivative,"X, R, S",Structural component in glycoside derivatives,,,,"Anti-aging, Collagen synthesis stimulation","ascorbyl-2 glucoside, 2-O-alpha-D-glucopyranosyl L-ascorbic acid",True,True
+Ascorbyl Glucoside,,,Ascorbyl Glucoside,,L'OREAL,"Skin brightening agent, Anti-aging agent","6-O-f-D-galactopyranosyl L-ascorbic acid, ascorbyl-2 glucoside, 2-O-a.-D-glucopyranosyl L-ascorbic acid",True,False
+Sodium Ascorbyl Phosphate,,,"Sodium Ascorbyl Phosphate, Calcium Ascorbyl Phosphate",,,antioxidant,"calcium ascorbyl phosphate, sodium ascorbyl phosphate",True,False
+Ascorbic Acid Precursors,,,"Ascorbic Acid, Ascorbyl-2 Glucoside, 2-O-alpha-D-glucopyranosyl L-ascorbic acid, 6-O-beta-D-galactopyranosyl L-ascorbic acid",,,Antioxidant,"Active agent saccharide derivatives, Active agent amides",True,False
+saccharide esters of ascorbic acid,,,,,,emulsifier,"glycosyl, mannosyl, fructosyl, fucosyl, galactosyl, N-acetylglucosamine, N-acetylmuramic",True,True
+C-B-D-maltopyranoside-2-hydroxypropane,,,C-B-D-maltopyranoside-2-hydroxypropane,Chimex,Chimex,skin conditioning agent,Mexoryl SBB®,True,False
+C-B-D-xylopyranoside-2-hydroxypropane,,,,,,skin conditioning agent,Mexoryl SBB®,True,False
+C-glycoside derivative,"X, R, S",Structural component in formula,,,,Skin conditioning agent,"C-B-D-xylopyranoside-n-propan-2-one, C-a-D-xylopyranoside-n-propan-2-one, 1-(C-B-D-fucopyranoside)propan-2-one",True,False
+6-(C-a-D-galactopyranosyl)-5-phenylaminohexanoic acid,,,Caproic Acid,,,structural_component,,False,True
+C-glycoside derivative,C-glycoside,Functional bridge between actives,,,,"synergistic combination, anti-aging","ascorbyl-2 glucoside, 6-O-f-D-galactopyranosyl L-ascorbic acid",True,False
+"1-(C-p-D-galactopyranosyl)hexane-2,6-diol",,,,,,misc,,True,False
+C-glycoside derivative,C-glycoside derivative,Synergistic with ascorbic acid,C-glycoside derivative,,L'OREAL,"Anti-aging, Collagen synthesis stimulation",Combination with ascorbic acid,True,False
+C-Glycoside Derivative,C-glycoside derivative,Active ingredient for collagen synthesis,C-Glycoside Derivative,,L'OREAL,"Anti-aging, Collagen synthesis booster",Combination with ascorbic acid,True,False
+6-(C-B-D-galactopyranosyl)-5-ketohexanoic acid,,,,,,misc,,True,False
+ascorbyl phosphate,,,Ascorbyl Phosphate,,,skin conditioning agent,,True,False
+Sulfate,,,Sulfate,,,Skin conditioning agent,"Phosphates, Palmitates, Acetates, Propionates, Ferulates",True,False
+C-glycoside derivative,"X, R, S",Structural component in chemical formula,C-glycoside derivative,,L'OREAL,"Anti-aging agent, Collagen synthesis booster",D-xylose derivatives,True,False
+Acetate Ester,,,Acetate,,,Skin conditioning agent,Acetic acid,True,False
+Propionic Acid Ester,,,Propionate,,,skin conditioning agent,propionic acid,True,False
+Ferulic Acid Ester,,,Ferulate,,,skin conditioning agent,,True,False
+Sodium Ascorbate,,,Sodium Ascorbate,,,Antioxidant,,True,False
+Glycosyl Ascorbic Acid,,,Glycosyl Ascorbic Acid,,,antioxidant,,True,False
+liquid triglycerides,,,,,,emollient,"sunflower oil, corn oil, soybean oil, marrow oil, grape-seed oil, sesameseed oil, hazelnut oil, apricot oil, almond oil",False,True
+fatty acid esters,,,,,,emollient,"sunflower oil, corn oil, soybean oil, grapeseed oil, sesameseed oil, hazelnut oil, apricot oil, almond oil, avocado oil, purcellin oil",False,True
+fluoro and perfluoro oils,,,,,,emollient,,False,True
+silicone gums,,,,,,emollient,,False,True
+Glycine Max (Soybean) Seed Extract,,,"Glycine Soja (Soybean) Protein, Glycine Max (Soybean) Seed Extract","Ichimaru Pharcos, LSN, Silab","Ichimaru Pharcos, LSN, Silab","skin conditioning agent, fibroblast proliferation agent, collagen synthesis stimulator","Raffermine®, Flavosterone SB®, Eleseryl SH-VEG 8®",True,False
+Retinoids,,,"Retinol, Retinyl Palmitate","Phloroglucinol, Extracts of Solanum Tuberosum, Extracts of Walnut Cakes","Sederma, Gattefosse",Keratinocyte proliferation agent,"Phloroglucinol, Extracts of Solanum Tuberosum, Extracts of Walnut Cakes, Retinyl Palmitate",True,False
+Keratinocyte Differentiation Agents,,,Calcium,"Extract of Lupin, Extract of Corn, Lignans, Sodium 3-sitosteryl sulfate","Silab, Seporga, Solabia",Keratinocyte differentiation agent,"Photopreventine®, Phytocohesine®, Phytovityl®",True,False
+Hydrobromic Acid,,,Hydrobromic Acid,,,Mineral Acid,,False,True
+Hydriodic Acid,,,Hydriodic Acid,,,,,False,True
+Phosphoric Acid,,,Phosphoric Acid,,,Mineral Acid,,False,True
+Boric Acid,,,Boric Acid,,,Mineral Acid,,False,True
+Propionic Acid,,,Propionic Acid,,,Carboxylic acid,"Acetic acid, Terephthalic acid, Citric acid, Tartaric acid",False,True
+Acetic Acid,,,Acetic Acid,,,"Ester precursor, Organic acid",Ascorbic acid esters,False,True
+terephthalic acid,,,Terephthalic Acid,,,Aromatic acid,,False,True
+citric acid,,,Citric Acid,,,Acidulant,"propi- onic acid, acetic acid, terephthalic acid, citric acid, tartaric acid",False,True
+tartaric acid,,,Tartaric Acid,,,Acidifying agent,,False,True
+Lithium Hydroxide,,,Lithium Hydroxide,,,pH adjuster,,False,True
+Sodium Hydroxide,,,Sodium Hydroxide,,,pH adjuster,,False,True
+Potassium Hydroxide,,,Potassium Hydroxide,,,pH adjuster,,False,True
+Calcium Hydroxide,,,Calcium Hydroxide,,,pH adjuster,,False,True
+Ammonium Hydroxide,,,Ammonium Hydroxide,,,pH adjuster,,False,True
+Magnesium Hydroxide,,,Magnesium Hydroxide,,,pH adjuster,,False,True
+Zinc Hydroxide,,,Zinc Hydroxide,,,pH adjuster,,False,True
+triethylamine,,,Triethylamine,,,Neutralizing agent,,False,True
+butylamine,,,Butylamine,,,Neutralizing agent,,False,True
+2-Amino-2-methyl-1-propanol,,,2-Amino-2-methyl-1-propanol,,,Neutralizing agent,"triethanolamine, dimethylamino-2-propanol",False,True
+triethanolamine,,,Triethanolamine,,,neutralizing agent,,False,True
+C-glycoside derivative,,,C-glycoside derivative,,L'OREAL,"Anti-aging, Collagen synthesis booster",D-xylose derivatives,True,False
+Tris(hydroxymethyl)aminomethane,,,Tris(hydroxymethyl)aminomethane,,,"Buffering agent, pH adjuster",,False,True
+Lysine,,,Lysine,,,Neutralizing agent,,False,True
+C-glycoside derivative,"X, R, S",Structural component in formulas,C-glycoside derivative,,,"Anti-aging, Collagen synthesis stimulation",Ascorbic acid combination,True,True
+aqueous phase,,,,,,solvent,"spring water, water, floral water",False,True
+organic solvents,,,,,,solvent,"tert-butanol, ethanol, isopropanol, n-butanol, polyethylene glycol, glycerol, butylene glycol, propylene glycol, isoprene glycol",False,True
+emulsifying surfactant,,,,,,"emulsifier, surfactant","oxyethylenated sorbitan monostearate, stearyl alcohol, cetyl alcohol, glyceryl stearate",True,True
+coemulsifier,,,,,,emulsion stabilizer,"cetyl alcohol, stearyl alcohol, oxyethylated sorbitan monostearate, glyceryl stearate",False,True
+volatile oils,,,,,,emollient,"isododecane, fluoro oils, cetyl dimethicone, sunflower oil, corn oil, soybean oil, marrow oil, grapeseed oil, sesameseed oil, hazelnut oil, apricot oil, almond oil",False,True
+volatile and non-volatile oils,,,,,,emollient,"isododecane, sunflower oil, corn oil, soybean oil, grapeseed oil, sesameseed oil, hazelnut oil, apricot oil, almond oil, avocado oil, fish oils, purcellin oil, liquid paraffin, liquid petroleum jelly, perhydrosqualene, wheat-germ oil, macadamia oil, coconut oil, groundnut oil, palm oil, castor oil, jojoba oil, olive oil, cereal germ oils",False,True
+Olea Europaea (Olive) Leaf Extract,,,Olea Europaea (Olive) Leaf Extract,olive tree leaves,"Vin-yals, Biologia & Technologia","antioxidant, NO-synthase inhibitor",Eurol BT,True,False
+Ginkgo biloba extract,,,"Ginkgo Biloba Leaf Extract, Ginkgo biloba extrait standard",Beaufour,Beaufour,"antioxidant, stimulating dermal macromolecules",,True,False
+Centella Asiatica Extract,,,Centella Asiatica Extract,,Sederma,Collagen synthesis stimulant,,True,False
+Asiaticoside,,,Asiaticoside,Centella asiatica extract,,collagen synthesis booster,,True,False
+Synthetic Peptides,,,,Sederma,Sederma,Collagen synthesis stimulation,"biopeptide CL, iamin, palmitoyloligopeptide",True,False
+Palmitoyl Oligopeptide,,,Palmitoyl Oligopeptide,,,"Collagen booster, Increases collagen synthesis",,True,False
+soybean hydrolyzate,,,Hydrolyzed Soy Protein,Coletica,Coletica,collagen synthesis booster,Phytokine®,True,False
+auxins and lignans,,,"auxins, lignans, giberrellins, cytokinins",plant extracts,"Coletica, LSN, Silab","collagen booster, stimulating dermal macromolecules, stimulating keratinocyte proliferation","auxins, lignans, giberrellins, cytokinins",True,False
+Saccharomyces cerevisiae extract,,,Saccharomyces cerevisiae extract,LSN,LSN,"stimulating elastin synthesis, skin conditioning agent",Cytovitin®,True,False
+Macrocystis Pyrifera Extract,,,Macrocystis Pyrifera Extract,SECMA,SECMA,"skin conditioning agent, elastin synthesis stimulant",Kelpadelie®,True,False
+retinol,,,"Retinoid, Retinol, Retinyl Palmitate","plant proteins, polypeptides","Gattefosse, Sederma","anti-aging agent, stimulating keratinocyte proliferation, inhibition of metalloproteases","retinoids and derivatives, retinol, retinyl palmitate",True,False
+Palmitoyl Oligopeptide,,,Palmitoyl Oligopeptide,Sederma,Sederma,"skin conditioning agent, collagen synthesis stimulant",Palmitoyl Oligopeptide,True,False
+Hydrogenated Oils (Solid at 25°C),,,Hydrogenated Oils,,,binding agent,,False,True
+Lanolin,,,Lanolin,,,emollient,,False,True
+Fatty Acid Esters,,,Fatty Acid Esters,,,emollient,purcellin oil,False,True
+Silicone Waxes,,,Silicone Wax,,,emollient,,False,True
+Fluoro Waxes,,,Fluoro Wax,,,Film Forming Agent,,False,True
+volatile oils,,,,,,solvent,"isododecane, fluoro oils, sunflower oil, corn oil, soybean oil, marrow oil, grapeseed oil, sesameseed oil, hazelnut oil, apricot oil, almond oil",False,True
+cyclic volatile silicones,,,cyclomethicone,,,film forming agent,cyclocopolymers of the dimethyl-siloxane/methylalkylsiloxane type,False,True
+cyclocopolymers of dimethyl-siloxane/methylalkylsiloxane,,,,,,emulsion stabilizer,,False,True
+linear volatile silicones,,,"linear polydimethylsiloxanes, alkylmethylpolysiloxanes",,,film forming agent,cetyl dimethicone,False,True
+volatile hydrocarbon-based oils,,,"isododecane, fluoro oils",,,solvent,"isododecane, fluoro oils",False,True
+polyalkylsiloxanes,"C, C",Variable alkyl chain length,,,,emollient,"linear polydimethylsiloxanes, cetyl dimethicone, alkylmethylpolysiloxanes",False,True
+Silicones with Functional Groups,,,,,,Emulsion Stabilizer,Cetyl Dimethicone,False,True
+phenyl silicone oils,,,,,,film forming agent,,False,True
+"Oils of animal, plant, or mineral origin",,,,,,emollient,"marrow oil, corn oil, apricot oil, sesameseed oil, almond oil, grapeseed oil, hazelnut oil, soybean oil, sunflower oil, avocado oil, fish oils, purcellin oil, liquid paraffin, liquid petroleum jelly, perhydrosqualene, wheat-germ oil, beauty-leaf oil, macadamia oil, rapeseed oil, coconut oil, groundnut oil, palm oil, castor oil, jojoba oil, olive oil, cereal germ oils",False,True
+Glycerol,,,Glycerin,,,Humectant,,True,True
+Pentanediol,,,Pentanediol,,,"Humectant, Moisturizer",,True,True
+Sodium PCA,,,Sodium PCA,,,"humectant, skin conditioning agent, moisturizer",,True,True
+serine,,,Serine,,,"humectant, skin conditioning agent",,True,True
+Xylitol,,,Xylitol,,,"Humectant, Moisturizer",,True,True
+Sodium Lactate,,,Sodium Lactate,,,"Humectant, Moisturizer",,True,True
+Polyglyceryl Acrylate,,,Polyglyceryl-3 Acrylate,,,"humectant, emulsifier",,True,True
+Ectoin,,,Ectoin,,,"humectant, soothing agent, moisturizer",,True,False
+chitosan,,,Chitosan,,,film forming agent,,False,True
+oligosaccharides,,,Oligosaccharide,,,skin conditioning agent,,False,True
+oligosaccharides and polysaccharides,,,Polysaccharide,,,film forming agent,,False,True
+Cyclic Carbonates,,,Cyclic Carbonate,,,solvent,,False,True
+N-Lauroylpyrrolidonecarboxylic Acid,,,N-Lauroylpyrrolidonecarboxylic Acid,,,surfactant,,False,True
+N-alpha-benzoyl-L-arginine,,,N-alpha-benzoyl-L-arginine,,,skin conditioning agent,,False,True
+Dehydroepiandrosterone,,,Dehydroepiandrosterone,,,"skin conditioning agent, activates sebaceous glands",,True,False
+Vitamin D and derivatives,,,Vitamin D,,,"skin conditioning agent, sebaceous gland activator",,True,False
+Anti-glycation agent,,,Anti-glycation agent,"Ericacea family plant extracts, ergothioneine derivatives, hydroxystilbenes derivatives","Euromed, Indena, Hansen","Anti-aging agent, Prevents glycation of skin proteins","Blueberry extract (Vaccinium angustifolium), Resveratrol, 3,3',5,5'-tetra-hydroxystilbene",True,False
+NO-synthase inhibitors,,,NO-synthase inhibitors,"Vitis vinifera, Olea europaea","Euromed, Indena, Hansen, Vinyals",anti-inflammatory agent,"Leucocyanidines® de raisins extra, Leucoselect®, Extrait de marc de raisin",True,False
+L-fucose,,,L-fucose,,,Monosaccharide,1-(C-α-L-fucopyranoside)-2-hydroxypropane,False,True
+D-galactose,,,D-galactose,,,,,False,True
+D-maltose,,,Maltose,,,,,False,True
+C5-C Hydrofluoroalkyl or Perfluoroalkyl Radical,"R, R', S, X",Functional bridge between radicals,,,,Structural component,,False,True
+Heteroatom,"X, R, S",Structural component in chemical formulas,,,,Structural component,"nitrogen, sulfur, silicon, oxygen",False,True
+Hydroxyl Group,Structural component in chemical formulas,Functional bridge in chemical structures,,,,Structural component,,False,True
+Dulbecco's Modified Eagle Medium (DMEM),,,Dulbecco's Modified Eagle Medium,Invitrogen,Invitrogen,Culture medium for cell growth,Normal human dermal fibroblasts culture,False,True
+C-glycoside derivative,,,C-B-D-xylopyranoside-2-hydroxypropane,Chimex,Chimex,"Anti-aging, Procollagen synthesis",Mexoryl SBB,True,False
+Lipopeptides,,,Lipopeptide,Coletica,Coletica,"skin conditioning agent, inhibition of metalloproteases",Collal-ift®,True,False
+Lipoamino Acids,,,Lipoamino Acids,,,Skin Conditioning Agent,,True,False
+malt extract,,,Hordeum Vulgare Extract,Coletica,Coletica,"skin conditioning agent, inhibition of metalloproteases",Collal-ift®,True,False
+Blueberry Extract,,,Vaccinium Angustifolium (Blueberry) Fruit Extract,Ericacea family,,"antioxidant, anti-glycation agent",extract of blueberry,True,False
+Rosmarinus Officinalis (Rosemary) Leaf Extract,,,Rosmarinus Officinalis (Rosemary) Leaf Extract,,,antioxidant,,True,False
+Lycopene,,,Lycopene,,,antioxidant,,True,False
+Isoflavones,,,Isoflavone,"soybean, red clover, flax, kakkon, sage",Ichimaru Pharcos,antioxidant,"soybean extract, kakkon extract, flax extract, red clover extract, sage extract",True,False
+Trifolium Pratense (Red Clover) Extract,,,Trifolium Pratense (Clover) Flower Extract,plant extracts containing isoflavones,Ichimaru Pharcos,"antioxidant, inhibition of serine proteases",Flavosterone SB®,True,False
+flax extract,,,Linum Usitatissimum (Linseed) Seed Extract,flax,,antioxidant,,True,False
+Pueraria Lobata Root Extract,,,Pueraria Lobata Root Extract,"extracts of soybean, extracts of red clover, extracts of flax, extracts of kakkon, extracts of sage",Ichimaru Pharcos,"antioxidant, collagen synthesis, anti-aging",Flavosterone SB®,True,False
+Salvia Officinalis (Sage) Extract,,,Salvia Officinalis (Sage) Extract,plant extracts,,antioxidant,extracts of sage,True,False
+Serine Protease Inhibitors,,,Serine Protease Inhibitor,Leguminosa seeds (Pisum sativum),LSN,"Anti-inflammatory agent, Inhibition of serine proteases",Peptide extract of Leguminosa seeds (Pisum sativum),True,False
+Peptide Extract of Leguminosa Seeds,,,Pisum Sativum Peptide,LSN,LSN,skin conditioning agent,Parelastyl®,True,False
+Heparinoid,,,Heparinoid,,,anti-inflammatory agent,,True,False
+Pseudodipeptide,,,Pseudodipeptide,"Leguminosa seeds, Heparinoids",LSN,"skin conditioning agent, inhibition of serine proteases",(2-[acetyl(3-trifluoromethylphenyl)amino]-3-methyl-butyrylamino)acetic acid,True,False
+Lupin Extract,,,Lupinus Albus Seed Extract,Silab,Silab,"fibroblast proliferation agent, stimulates epidermal macromolecules",Structurine®,True,False
+Fagus Sylvatica Bud Extract,,,Fagus Sylvatica Bud Extract,Gattefosse,Gattefosse,"fibroblast proliferation agent, stimulate epidermal macromolecules",Gatuline®,True,False
+Zooplankton Salina Extract,,,Zooplankton Extract,Seporga,Seporga,"fibroblast proliferation agent, stimulating epidermal macromolecules",GP4AG®,True,False
+Ceramides,,,Ceramide,,,"Moisturizer, Skin conditioning agent","Sphingoid-based compounds, Lecithins, Glycosphingolipids, Phospholipids, Cholesterol and derivatives, Phytosterols, Essential fatty acids",True,False
+Sphingoid-based Moisturizers,,,"Sphingolipids, Glycosphingolipids",,,"Skin conditioning agent, Moisturizer","Ceramides, Lecithins, Phospholipids",True,False
+Lecithin,,,Lecithin,,,"Emollient, Moisturizer",,True,False
+glycosphingolipids,,,,,,"moisturizer, skin conditioning agent",,True,False
+Phospholipids,,,,,,"Emollient, Moisturizer",,True,False
+Cholesterol,,,Cholesterol,,,"emollient, moisturizer",,True,False
+"Phytosterols (stigmasterol, β-sitosterol, campesterol)",,,"Phytosterols, Stigmasterol, β-Sitosterol, Campesterol",,,"Skin conditioning agent, Moisturizer","Stigmasterol, β-Sitosterol, Campesterol",True,False
+Essential Fatty Acids,,,Essential Fatty Acids,,,"emollient, moisturizer","ceramides, lecithins, phospholipids, cholesterol",True,False
+"1,2-Diacylglycerol",,,"1,2-Diacylglycerol",,,emollient,,True,False
+4-Chromanone,,,4-Chromanone,,,"Moisturizer, Skin Conditioning Agent",,True,False
+ursolic acid,,,ursolic acid,,,"skin conditioning agent, moisturizer",,True,False
+Ursolic Acid,,,Ursolic Acid,,,"skin conditioning agent, moisturizer",pentacyclic triterpenes,True,False
+Petroleum Jelly,,,Petrolatum,,,"Emollient, Moisturizer","Liquid paraffin, Perhydrosqualene",True,False
+Lanolin,,,Lanolin,,,"Emollient, Moisturizer",,True,False
+Trehalose,,,Trehalose,,,"humectant, moisturizer",,True,False
+Hyaluronic Acid,,,Hyaluronic Acid,,,"moisturizer, humectant",,True,False

@@ -1,10 +1,8 @@
 NAME,PLACEHOLDER,ROLE_OF_PLACEHOLDER,STANDARD_NAMES,SOURCE_SUPPLIER,SUPPLYING_COMPANY,FUNCTIONAL_ROLES,MENTIONED_EXAMPLES,IS_ACTIVE_INGREDIENT,IS_STRUCTURAL_COMPONENT
-mineral salt,,,,,,viscosity modifier,"lithium chloride, magnesium sulfate",False,True
-Lithium Chloride,,,Lithium Chloride,,,Mineral Salt,,False,True
-vitreoscilla ferment,,,Vitreoscilla Ferment,,,skin conditioning agent,,True,False
-"acrylic acid homopolymer crosslinked with an allyl ether of pentaerythritol, crosslinked acrylic acid homopolymer",,,"Acrylic Acid Homopolymer, Carbomer, Crosslinked Acrylic Acid Homopolymer",,,"emulsion stabilizer, viscosity modifier","allyl ether of propylene, allyl ether of sucrose, an allyl ether of propylene, an allyl ether of sucrose, homopolymer of acrylic acid crosslinked with an allyl ether of pentaerythritol",False,True
-Xanthan Gum,,,Xanthan Gum,,,"viscosity modifier, emulsion stabilizer",,False,True
-Sodium Alginate,,,"Sodium Alginate, Ammonium Alginate, Potassium Alginate, Alginic Acid",,,"Viscosity Modifier, Emulsion Stabilizer","Sodium Alginate, Potassium Alginate, Alginic Acid, Ammonium Alginate",False,True
+"mineral salt, mineral salt (lithium and magnesium compounds)",,,"calcium chloride, lithium chloride, magnesium chloride, potassium chloride, sodium chloride",,,"emulsion stabilizer, viscosity modifier","calcium chloride, lithium carbonate, lithium chloride, lithium nitrate, magnesium carbonate, magnesium chloride, magnesium nitrate, magnesium sulfate, potassium chloride, sodium chloride",False,True
+"Crosslinked Acrylic Acid Homopolymer, acrylic acid homopolymer crosslinked with allyl ether of pentaerythritol, crosslinked acrylic acid homopolymer, or propylene, sucrose",,,"Carbomer, Crosslinked Acrylic Acid Homopolymer",,,"Emulsion Stabilizer, emulsifier, emulsion stabilizer","an allyl ether of propylene, an allyl ether of sucrose, homopolymer of acrylic acid crosslinked with an allyl ether of pentaerythritol, pentaerythritol, propylene, sucrose",False,True
+xanthan gum,,,Xanthan Gum,,,"thickening agent, emulsion stabilizer",,False,True
+"Sodium Alginate, alginate",,,"Algin, Alginic Acid, Ammonium Alginate, Potassium Alginate, Sodium Alginate",,,"Emulsion Stabilizer, emulsifier","Ammonium Alginate, Potassium Alginate, Sodium Alginate, alginic acid, ammonium alginate, potassium alginate, sodium alginate",False,True
 water insoluble active ingredient,,,"vitreoscilla ferment, silica, boron nitride",,,active ingredient,"vitreoscilla ferment, silica, boron nitride",True,False
-Alginic Acid and Alginates,,,"Alginic Acid, Sodium Alginate, Ammonium Alginate, Potassium Alginate",,,Emulsion Stabilizer,,False,True
-Calcium Chloride,,,Calcium Chloride,,,Mineral Salt,"calcium hydrogen carbonate, calcium sulfate, lithium sulfate, sodium carbonate, potassium carbonate, sodium chloride, potassium nitrate, calcium chloride, potassium hydrogen carbonate, calcium carbonate, sodium nitrate, calcium nitrate, sodium hydrogen carbonate, potassium sulfate, lithium hydrogen carbonate, sodium sulfate, lithium carbonate, lithium chloride, magnesium chloride, potassium chloride, lithium nitrate, magnesium sulfate",False,True
+Alginic Acid and Alginates,,,"Alginic Acid, Sodium Alginate, Ammonium Alginate, Potassium Alginate",,,Emulsifier,,False,True
+vitreoscilla ferment,,,,,,skin conditioning agent,,True,False

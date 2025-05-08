@@ -585,6 +585,35 @@ const MergedUnstructuredImport: React.FC = () => {
     }
   }
 
+  const handleLoadPatent1 = async () => {
+    // Base path under public/
+    const base = "/patent1";
+  
+    // build full URLs (they’ll be served at e.g. http://…/static/patent1/... if you configured /static to point at public/)
+    setInitialGraphUrl(`${base}/Seed-Graph.html`);
+    setRefinedGraphUrl(`${base}/Refined-Graph.html`);
+    setMonteCarloPlotUrl(`${base}/combined_plot.png`);
+    setTop10JsonUrl(`${base}/products_top10_number_1.json`);
+  
+    // now open the modal
+    setShowGraphModal(true);
+  };
+
+  const handleLoadPatent2 = async () => {
+    // Base path under public/
+    const base = "/patent2";
+  
+    // build full URLs (they’ll be served at e.g. http://…/static/patent1/... if you configured /static to point at public/)
+    setInitialGraphUrl(`${base}/Seed-Graph.html`);
+    setRefinedGraphUrl(`${base}/Refined-Graph.html`);
+    setMonteCarloPlotUrl(`${base}/combined_plot.png`);
+    setTop10JsonUrl(`${base}/products_top10_number_1.json`);
+  
+    // now open the modal
+    setShowGraphModal(true);
+  };
+  
+
   // "Retry Failed Chunks" concurrency approach
   const handleRetryFailedChunks = async () => {
     if (currentVersion <= 1) {
@@ -1060,6 +1089,40 @@ const MergedUnstructuredImport: React.FC = () => {
           >
             Generate Graph
           </button>
+
+          {/* Row of 5 patent-load buttons */}
+          <div className="grid grid-cols-5 gap-2 mb-6">
+            <button
+              onClick={handleLoadPatent1}
+              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-sm"
+            >
+              Patent 1
+            </button>
+            <button
+              onClick={handleLoadPatent2}
+              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-sm"
+            >
+              Patent 2
+            </button>
+            <button
+              onClick={handleLoadPatent2}
+              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-sm"
+            >
+              Patent 3
+            </button>
+            <button
+              onClick={handleLoadPatent2}
+              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-sm"
+            >
+              Patent 4
+            </button>
+            <button
+              onClick={handleLoadPatent2}
+              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-sm"
+            >
+              Patent 5
+            </button>
+          </div>
 
           {/* Prompt for current version (not needed for V1) */}
           {currentVersion > 1 ? (

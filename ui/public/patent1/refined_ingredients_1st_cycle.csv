@@ -1,0 +1,60 @@
+NAME,PLACEHOLDER,ROLE_OF_PLACEHOLDER,STANDARD_NAMES,SOURCE_SUPPLIER,SUPPLYING_COMPANY,FUNCTIONAL_ROLES,MENTIONED_EXAMPLES,IS_ACTIVE_INGREDIENT,IS_STRUCTURAL_COMPONENT
+Vitreoscilla Ferment,,,,,,Active ingredient,,True,False
+keratin materials,,,,,,"skin care, anti-aging","skin, lips, eyelashes, eyebrows, nails, hair",False,True
+water insoluble active ingredient,"vitreoscilla ferment, silica, boron nitride",Functional bridge between actives,"vitreoscilla ferment, silica, boron nitride",NOVEAL,NOVEAL,"antioxidant, promote cell growth, product synthesis",MEXORYL® SCW,True,False
+Carbomer,,,Carbomer,"Lubrizol, 3 VSA","Lubrizol, 3 VSA","Emulsion stabilizer, Thickening agent","Carbopol 2984, Synthalen M, Carbopol 5984, Carbopol 954, Synthalen K, Carbopol 981, Carbopol 980",False,True
+Xanthan Gum,,,Xanthan Gum,"Keltro, Rhodia, Monsanto Chemical","Keltro, Rhodia, Monsanto Chemical",Emulsion Stabilizer,"Keltrol T, Rhodicare S, Kelsan S",False,True
+vitreoscilla ferment,,,"vitreoscilla ferment, silica, boron nitride",NOVEAL,NOVEAL,"skin conditioning agent, antioxidant","vitreoscilla ferment, silica, boron nitride",True,False
+Carbomer,,,Carbomer,"Lubrizol, 3 VSA","Lubrizol, 3 VSA",Emulsion stabilizer,"Carbopol 980, Carbopol 981, Carbopol 954, Carbopol 2984, Carbopol 5984, Synthalen M, Synthalen K",False,True
+Xanthan Gum,,,Xanthan Gum,"Keltro, Rhodia, Monsanto Chemical","Keltro, Rhodia, Monsanto Chemical","Emulsion Stabilizer, Viscosity Modifier","Keltrol T, Rhodicare S, Kelsan S",False,True
+Alginic Acid and Alginates,,,"Alginic Acid, Sodium Alginate, Ammonium Alginate, Potassium Alginate","brown algae, certain bacteria","Cargill Products, FMC Biopolymer, Danisco, Kimica, DUPONT","emulsion stabilizer, water-soluble polymer","Kelcosol, Satialgine™, Cecalgum™, Algogel™, Protana, Alginate, Kimica Algin, PROTANAL PH 6160",False,True
+sodium alginate,,,Sodium Alginate,natural sources,"Kelcosol, Kimica Algin, Protana","emulsion stabilizer, emulsifier","Kelcosol, Kimica Algin, Protana, Satialgine™, PROTANAL PH 6160, Cecalgum™",True,True
+Alginic Acid,,,Alginic Acid,"Brown algae, Certain bacteria","Cargill Products, FMC Biopolymer, Danisco, Kimica, DUPONT","Emulsion stabilizer, Emulsifier, Viscosity modifier","Kelcosol, Satialgine™, Cecalgum™, Algogel™, Protana, Kimica Algin, PROTANAL PH 6160",True,True
+mineral salt,,,,COMPAGNIE DE VICHY,COMPAGNIE DE VICHY,"structural component, pH adjuster","calcium chloride, calcium sulfate, calcium nitrate, calcium carbonate, calcium hydrogen carbonate, sodium chloride, sodium sulfate, sodium nitrate, sodium carbonate, sodium hydrogen carbonate, potassium chloride, potassium sulfate, potassium nitrate, potassium carbonate, potassium hydrogen carbonate, lithium chloride, lithium sulfate, lithium nitrate, lithium carbonate, lithium hydrogen carbonate, magnesium chloride, magnesium sulfate, magnesium nitrate, magnesium carbonate, magnesium hydrogen carbonate",False,True
+water,,,Aqua,VICHY,VICHY,solvent,,False,True
+Sodium Alginate,,,"Alginates, Sodium Alginate, Ammonium Alginate, Potassium Alginate","Brown Algae, Certain Bacteria","Cargill Products, FMC Biopolymer, Danisco, Kimica, DUPONT","Emulsifier, Viscosity Modifier","Kelcosol, Kimica Algin, Algogel™, Protana, Satialgine™, PROTANAL PH 6160, Cecalgum™",True,True
+Alginic Acid and Alginates,,,"Alginic Acid, Sodium Alginate, Ammonium Alginate, Potassium Alginate","Brown Algae, Certain Bacteria","Cargill Products, FMC Biopolymer, Danisco, Kimica, DUPONT","Emulsion Stabilizer, Film Forming Agent","Kelcosol, Satialgine™, Cecalgum™, Algogel™, Protana, Kimica Algin, PROTANAL PH 6160",False,True
+Ammonium Alginate,,,Ammonium Alginate,"Cargill Products, FMC Biopolymer, Danisco, Kimica, DUPONT","Cargill Products, FMC Biopolymer, Danisco, Kimica, DUPONT",Emulsifier,"Kelcosol, Kimica Algin, Algogel™, Protana, Satialgine™, PROTANAL PH 6160, Cecalgum™",True,True
+potassium alginate,,,Potassium Alginate,"Cargill Products, FMC Biopolymer, Danisco, Kimica, DUPONT","Cargill Products, FMC Biopolymer, Danisco, Kimica, DUPONT",emulsifier,"Kelcosol, Kimica Algin, Algogel™, Protana, Satialgine™, PROTANAL PH 6160, Cecalgum™",True,True
+Crosslinked Acrylic Acid Homopolymer,,,Carbomer,"Lubrizol, 3 VSA","Lubrizol, 3 VSA","Emulsion Stabilizer, Film Forming Agent","Crosslinked with an allyl ether of pentaerythritol, Crosslinked with an allyl ether of sucrose, Crosslinked with an allyl ether of propylene, Carbopol 980, Carbopol 981, Carbopol 954, Carbopol 2984, Carbopol 5984, Synthalen M, Synthalen K",False,True
+Alginates,,,"Algin, Alginic Acid","brown algae, certain bacteria","Cargill Products, FMC Biopolymer, Danisco, Kimica, DUPONT","emulsion stabilizer, water-soluble polymer","sodium alginate, ammonium alginate, potassium alginate",False,True
+Vitreoscilla Ferment,,,Vitreoscilla Ferment,NOVEAL,NOVEAL,"antioxidant, skin conditioning agent, soothing agent",MEXORYL® SCW,True,False
+silica,,,silica,,,"bulking agent, abrasive",,True,True
+Boron Nitride,,,Boron Nitride,,L'OREAL,"anti-aging agent, water insoluble active ingredient","vitreoscilla ferment, silica",True,True
+calcium chloride,,,Calcium Chloride,,,structural component,,False,True
+Sodium Chloride,,,Sodium Chloride,,,structural component,,False,True
+Carbomer,,,Acrylates/Alkyl Acrylate Crosspolymer,"Lubrizol, 3 VSA","Lubrizol, 3 VSA",emulsion stabilizer,"Carbopol 980, Carbopol 981, Carbopol 954, Carbopol 2984, Carbopol 5984, Synthalen M, Synthalen K",False,True
+Alginic Acid,,,Algin,,,Emulsion Stabilizer,"Ammonium Alginate, Potassium Alginate, Sodium Alginate, Alginic Acid",False,True
+Citric Acid,,,"Citric Acid, Citric Acid Monohydrate",CITRIQUE BELGE,CITRIQUE BELGE,pH adjuster,,False,True
+Hydroxyacetophenone,,,Hydroxyacetophenone,SYMSAVE HO,SYMRISE,"antioxidant, preservative",,True,True
+Chlorphenesin,,,Chlorphenesin,,,Preservative,,False,True
+fragrance,,,,,,fragrance,"perfumes, essential oils",False,True
+Propanediol,,,Propanediol,,,"humectant, solvent","hydroxyethyl urea, acetamide MEA, glycerin, propylene glycol, butylene glycol, pentylene glycol, PEG/PPG/polybutylene glycol-8/5/3 glycerin, methyl gluceth-20, sodium hyaluronate",False,True
+Hydroxyethyl Urea,,,Hydroxyethyl Urea,,,humectant,"propanediol, acetamide MEA, glycerin, propylene glycol, butylene glycol, pentylene glycol, PEG/PPG/polybutylene glycol-8/5/3 glycerin, methyl gluceth-20, sodium hyaluronate",False,True
+Acetamide MEA,,,Acetamide MEA,,,humectant,"propanediol, hydroxyethyl urea, glycerin, propylene glycol, butylene glycol, pentylene glycol, PEG/PPG/polybutylene glycol-8/5/3 glycerin, methyl gluceth-20, sodium hyaluronate",False,True
+PEG/PPG/polybutylene glycol-8/5/3 glycerin,,,"Glycerin, PEG/PPG/polybutylene glycol-8/5/3 glycerin",NOF CORPORATION,NOF CORPORATION,Humectant,,True,True
+Propylene Glycol,,,Propylene Glycol,,,Humectant,"propanediol, hydroxyethyl urea, acetamide MEA, glycerin, butylene glycol, pentylene glycol, PEG/PPG/polybutylene glycol-8/5/3 glycerin, methyl gluceth-20, sodium hyaluronate",False,True
+Butylene Glycol,,,Butylene Glycol,WILBRIDE S-753L,NOF CORPORATION,humectant,PEG/PPG/polybutylene glycol-8/5/3 glycerin,False,True
+Pentylene Glycol,,,Pentylene Glycol,,,Humectant,,False,True
+PEG/PPG/Polybutylene Glycol-8/5/3 Glycerin,,,PEG/PPG/Polybutylene Glycol-8/5/3 Glycerin,WILBRIDE S-753L,NOF CORPORATION,"humectant, emollient",,False,True
+Methyl Gluceth-20,,,Methyl Gluceth-20,LUBRIZOL,LUBRIZOL,humectant,GLUCAM™ E-20,False,True
+Sodium Hyaluronate,,,Sodium Hyaluronate,SOLIANCE (GIVAUDAN),SOLIANCE (GIVAUDAN),Humectant,,True,True
+keratin,,,keratin,,,hair conditioning agent,,True,False
+crosslinked acrylic acid homopolymer,,,"Carbomer, Synthalen M, Synthalen K","Lubrizol, 3 VSA","Lubrizol, 3 VSA","film forming agent, viscosity enhancer","Carbopol 980, Carbopol 981, Carbopol 954, Carbopol 2984, Carbopol 5984",False,True
+sodium alginate,,,"sodium alginate, ammonium alginate, potassium alginate","brown algae, certain bacteria","Cargill Products, FMC Biopolymer, Danisco, Kimica, DUPONT","gelling agent, emulsion stabilizer","Kelcosol, Satialgine™, Cecalgum™, Algogel™, Protana, Kimica Algin, PROTANAL PH 6160",False,True
+Carbomer,,,"Carbomer, Acrypol® 980","Lubrizol, Corel Pharma Chem","Lubrizol, Corel Pharma Chem","emulsion stabilizer, viscosity modifier","Carbopol 980, Carbopol 981, Carbopol 954, Carbopol 2984, Carbopol 5984, Synthalen M, Synthalen K",False,True
+Trisodium Citrate Dihydrate,,,Trisodium Citrate Dihydrate,CITRIQUE BELGE,CITRIQUE BELGE,pH adjuster,,False,True
+Hydroxyacetophenone,,,Hydroxyacetophenone,SYMRISE,SYMRISE,antioxidant,,True,False
+PEG/PPG/Polybutylene Glycol-8/5/3 Glycerin,,,PEG/PPG/Polybutylene Glycol-8/5/3 Glycerin,NOF CORPORATION,NOF CORPORATION,emollient,,False,True
+Methyl Gluceth-20,,,Methyl Gluceth-20,Lubrizol,Lubrizol,humectant,,False,True
+Cristalhyal LO,,,Sodium Hyaluronate,SOLIANCE,GIVAUDAN,humectant,,True,True
+Carbomer Acrypol® 980,,,Carbomer,COREL PHARMA CHEM,COREL PHARMA CHEM,emulsion stabilizer,,False,True
+Keltrol® CG-T,,,Xanthan Gum,CP Kelco,CP Kelco,emulsion stabilizer,,False,True
+Citric Acid Monohydrate Granular,,,Citric Acid,CITRIQUE BELGE,CITRIQUE BELGE,pH adjuster,,False,True
+Trisodium Citrate Dihydrate,,,Sodium Citrate,CITRIQUE BELGE,CITRIQUE BELGE,pH adjuster,,False,True
+Vitreoscilla Ferment,,,Vitreoscilla Ferment,NOVEAL,NOVEAL,skin conditioning agent,,True,False
+Vitreoscilla Ferment,,,Vitreoscilla Ferment,NOVEAL,NOVEAL,"Skin Conditioning Agent, Antioxidant",MEXORYL® SCW,True,False
+Water Premix,,,Water Premix,VICHY,VICHY,Solvent,"Propanediol, Algin, PEG/PPG/Polybutylene Glycol-8/5/3 Glycerin",False,True
+Metal Chlorides,,,"Metal Chlorides, Metal Sulfates, Metal Nitrates, Metal Carbonates",Compagnie de Vichy,Compagnie de Vichy,Stabilizer,Sel de Vichy,False,True
+Mineral Salts Sel de Vichy,,,,COMPAGNIE DE VICHY,COMPAGNIE DE VICHY,Mineral Salts,,False,True
+Protanal PH 6160,,,"Algin, Alginates",DUPONT,DUPONT,Emulsion stabilizer,"Kelcosol, Satialgine™, Cecalgum™, Algogel™, Protana, Kimica Algin",False,True
